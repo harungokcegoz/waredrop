@@ -29,12 +29,12 @@ export default function AppNavigation() {
         },
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: colors.secondary,
+        tabBarActiveTintColor: colors.primary,
         tabBarIcon: ({ color, focused }) => {
           let iconName;
-          if (route.name === "index") iconName = "home";
-          else if (route.name === "outfits") iconName = "albums";
-          else if (route.name === "wardrobe") iconName = "shirt";
+          if (route.name === "home") iconName = "home";
+          else if (route.name === "outfits") iconName = "shirt";
+          else if (route.name === "wardrobe") iconName = "albums";
           else if (route.name === "profile") iconName = "person-circle";
           else if (route.name === "create") iconName = "add-circle";
           return (
@@ -50,11 +50,7 @@ export default function AppNavigation() {
           if (route.name === "create") {
             return (
               <View {...props}>
-                <Ionicons
-                  name="add-circle"
-                  size={50}
-                  color={colors.secondary}
-                />
+                <Ionicons name="add-circle" size={50} color={colors.primary} />
               </View>
             );
           }
@@ -62,7 +58,7 @@ export default function AppNavigation() {
         },
       })}
     >
-      <Tabs.Screen name="index" />
+      <Tabs.Screen name="home" />
       <Tabs.Screen name="outfits" />
       <Tabs.Screen name="create" />
       <Tabs.Screen name="wardrobe" />

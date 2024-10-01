@@ -12,8 +12,8 @@ export const showUpAnimationStyle = {
 };
 
 export const colors = {
-  primary: "#8ecae6",
-  secondary: "#bc6c25",
+  primary: "#bc6c25",
+  secondary: "#8ecae6",
   secondaryOpaque: "#28361833",
   brown: "#bc6c25",
   cream: "#fefae0",

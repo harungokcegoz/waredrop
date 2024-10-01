@@ -11,6 +11,9 @@ export interface Item {
   category: string;
   color: string;
   image_url: string;
+  brand: string;
+  price: number;
+  commercial_link?: string;
 }
 
 export interface Outfit {

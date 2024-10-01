@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useCallback, useState } from "react";
 
 import { Item } from "../model/types";
@@ -9,15 +10,32 @@ import {
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 
+const STORAGE_KEY = "@wardrobe_items";
+
 export const useItemViewModel = () => {
   const { user } = useStore();
   const [items, setItems] = useState<Item[]>([]);
 
-  const fetchItems = useCallback(async () => {
-    if (!user) return;
+  const saveItemsToStorage = async (updatedItems: Item[]) => {
     try {
-      const response = await getUserItems(user.id);
-      setItems(response.data);
+      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
+    } catch (error) {
+      console.error("Error saving items to storage:", error);
+    }
+  };
+
+  const fetchItems = useCallback(async () => {
+    try {
+      const storedItems = await AsyncStorage.getItem(STORAGE_KEY);
+      if (storedItems) {
+        setItems(JSON.parse(storedItems));
+      }
+
+      if (user) {
+        const response = await getUserItems(user.id);
+        setItems(response.data);
+        saveItemsToStorage(response.data);
+      }
     } catch (error) {
       console.error("Error fetching items:", error);
     }
@@ -25,10 +43,22 @@ export const useItemViewModel = () => {
 
   const addItem = useCallback(
     async (item: Omit<Item, "id" | "user_id">) => {
-      if (!user) return;
       try {
-        const response = await createItem(user.id, item);
-        setItems([...items, response.data]);
+        const newItem = { ...item, id: Date.now(), user_id: user?.id || 0 };
+        const updatedItems = [...items, newItem];
+        setItems(updatedItems);
+        saveItemsToStorage(updatedItems);
+
+        if (user) {
+          const response = await createItem(user.id, item);
+          const serverItem = response.data;
+          setItems((items) =>
+            items.map((i) => (i.id === newItem.id ? serverItem : i)),
+          );
+          saveItemsToStorage(
+            items.map((i) => (i.id === newItem.id ? serverItem : i)),
+          );
+        }
       } catch (error) {
         console.error("Error adding item:", error);
       }
@@ -38,14 +68,16 @@ export const useItemViewModel = () => {
 
   const updateItemById = useCallback(
     async (itemId: number, itemData: Partial<Item>) => {
-      if (!user) return;
       try {
-        const response = await updateItem(user.id, itemId, itemData);
-        setItems(
-          items.map((item: Item) =>
-            item.id === itemId ? response.data : item,
-          ),
+        const updatedItems = items.map((item) =>
+          item.id === itemId ? { ...item, ...itemData } : item,
         );
+        setItems(updatedItems);
+        saveItemsToStorage(updatedItems);
+
+        if (user) {
+          await updateItem(user.id, itemId, itemData);
+        }
       } catch (error) {
         console.error("Error updating item:", error);
       }
@@ -55,10 +87,14 @@ export const useItemViewModel = () => {
 
   const deleteItemById = useCallback(
     async (itemId: number) => {
-      if (!user) return;
       try {
-        await deleteItem(user.id, itemId);
-        setItems(items.filter((item: Item) => item.id !== itemId));
+        const updatedItems = items.filter((item) => item.id !== itemId);
+        setItems(updatedItems);
+        saveItemsToStorage(updatedItems);
+
+        if (user) {
+          await deleteItem(user.id, itemId);
+        }
       } catch (error) {
         console.error("Error deleting item:", error);
       }
@@ -66,5 +102,19 @@ export const useItemViewModel = () => {
     [user, items, setItems],
   );
 
-  return { items, fetchItems, addItem, updateItemById, deleteItemById };
+  const getItemById = useCallback(
+    (itemId: number) => {
+      return items.find((item) => item.id === itemId);
+    },
+    [items],
+  );
+
+  return {
+    items,
+    fetchItems,
+    addItem,
+    updateItemById,
+    deleteItemById,
+    getItemById,
+  };
 };

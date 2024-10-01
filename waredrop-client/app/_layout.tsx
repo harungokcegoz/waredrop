@@ -5,8 +5,7 @@ import "react-native-reanimated";
 import { TamaguiProvider } from "tamagui";
 
 import Navigation from "../components/navigation/Navigation";
-
-import config from "@/tamagui.config";
+import config from "../tamagui.config";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
