@@ -69,21 +69,22 @@ const ITEMS: Item[] = [
 const ClothesItemStack: React.FC<ClothesItemStackProps> = ({ items }) => {
   const renderItem = ({ item }: { item: Item }) => (
     <Card
-      onPress={() =>
-        router.push({
-          pathname: "/wardrobe/(clothes)/[id]",
-          params: { id: item.id },
-        })
-      }
       marginRight="$2"
       width={150}
       height={200}
       {...pressAnimationStyle}
+      onPress={() => {
+        router.push({
+          pathname: "/wardrobe/clothes/[id]",
+          params: { id: item.id },
+        });
+      }}
     >
       <Image
         source={getImage("jacket")}
         style={{ width: "100%", height: "100%" }}
         contentFit="cover"
+        cachePolicy="memory"
       />
     </Card>
   );
@@ -98,38 +99,6 @@ const ClothesItemStack: React.FC<ClothesItemStackProps> = ({ items }) => {
         estimatedItemSize={150}
         showsHorizontalScrollIndicator={false}
       />
-      {/* <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {ITEMS.map((item) => (
-          <Card
-            onPress={() =>
-              router.push({
-                pathname: "/wardrobe/(clothes)/[id]",
-                params: { id: item.id },
-              })
-            }
-            marginRight="$2"
-            width={150}
-            height={200}
-            {...pressAnimationStyle}
-          >
-            <YStack>
-              <Image
-                source={getImage("jacket")}
-                style={{ width: "100%", height: "100%" }}
-                contentFit="cover"
-              />
-              <Text
-                fontSize="$2"
-                fontWeight="bold"
-                marginTop="$1"
-                textAlign="center"
-              >
-                Jacket
-              </Text>
-            </YStack>
-          </Card>
-        ))}
-      </ScrollView> */}
     </View>
   );
 };

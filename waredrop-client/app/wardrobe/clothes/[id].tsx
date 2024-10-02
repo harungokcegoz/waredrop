@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useRouter, useSearchParams } from "expo-router";
+import { useRouter, useLocalSearchParams } from "expo-router";
 import React from "react";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -9,7 +9,7 @@ import { useItemViewModel } from "../../../viewmodels/ItemViewModel";
 
 export default function ClothesItemDetail() {
   const router = useRouter();
-  const { id } = useSearchParams();
+  const { id } = useLocalSearchParams();
   const { getItemById, deleteItemById } = useItemViewModel();
 
   const item = getItemById(Number(id));
@@ -39,7 +39,9 @@ export default function ClothesItemDetail() {
           <XStack>
             <Button
               icon={<Ionicons name="create-outline" size={24} color="black" />}
-              onPress={() => router.push(`/edit-clothes-item?id=${item.id}`)}
+              onPress={() =>
+                router.push(`/wardrobe/clothes/edit-clothes-item?id=${item.id}`)
+              }
               marginRight="$2"
             />
             <Button

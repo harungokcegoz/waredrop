@@ -32,7 +32,7 @@ export default function AppNavigation() {
         tabBarActiveTintColor: colors.primary,
         tabBarIcon: ({ color, focused }) => {
           let iconName;
-          if (route.name === "home") iconName = "home";
+          if (route.name === "index") iconName = "home";
           else if (route.name === "outfits") iconName = "shirt";
           else if (route.name === "wardrobe") iconName = "albums";
           else if (route.name === "profile") iconName = "person-circle";
@@ -58,7 +58,7 @@ export default function AppNavigation() {
         },
       })}
     >
-      <Tabs.Screen name="home" />
+      <Tabs.Screen name="index" />
       <Tabs.Screen name="outfits" />
       <Tabs.Screen name="create" />
       <Tabs.Screen name="wardrobe" />
