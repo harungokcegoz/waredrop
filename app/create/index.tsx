@@ -4,7 +4,7 @@ import React from "react";
 import ClothesItemForm from "../../components/ClothesItemForm";
 import { useItemViewModel } from "../../viewmodels/ItemViewModel";
 
-export default function UploadClothesScreen() {
+export default function CreateScreen() {
   const navigation = useNavigation();
   const { addItem } = useItemViewModel();
 
