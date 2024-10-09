@@ -48,9 +48,7 @@ export default function ClothesItemDetail() {
         setError("Error fetching item");
         console.error("Error fetching item:", err);
       } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
+        setIsLoading(false);
       }
     };
 

@@ -34,9 +34,7 @@ export default function EditClothesItemScreen() {
         setError("Error fetching item");
         console.error("Error fetching item:", err);
       } finally {
-        setTimeout(() => {
-          setIsLoading(false);
-        }, 1000);
+        setIsLoading(false);
       }
     };
 
@@ -49,7 +47,11 @@ export default function EditClothesItemScreen() {
       return;
     }
     await updateItemById(Number(itemId), values);
-    router.back();
+
+    router.push({
+      pathname: "/wardrobe/clothes/[id]",
+      params: { id: Number(itemId) },
+    });
   };
 
   if (isLoading) {
