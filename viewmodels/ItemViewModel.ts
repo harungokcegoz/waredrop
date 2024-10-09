@@ -1,22 +1,24 @@
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 
 import { Item } from "../model/types";
 import {
-  getUserItems,
-  createItem,
-  updateItem,
-  deleteItem,
+  getUserItemsApi,
+  addItemApi,
+  deleteItemApi,
+  getItemByIdApi,
+  updateItemApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 import { alert } from "../utils/utils";
 
 export const useItemViewModel = () => {
   const { user, wardrobe, setWardrobe, addItemWardrobe } = useStore();
+  const [isSuccess, setIsSuccess] = useState(false);
 
   const fetchItems = useCallback(async () => {
     try {
       if (user) {
-        const response = await getUserItems(user.id);
+        const response = await getUserItemsApi(user.id);
         setWardrobe(response.data);
       }
     } catch (error) {
@@ -28,21 +30,23 @@ export const useItemViewModel = () => {
     async (item: Omit<Item, "id" | "user_id">) => {
       try {
         const newItem = { ...item, id: Date.now(), user_id: user?.id || 0 };
-        addItemWardrobe(newItem);
-
         if (user) {
-          const response = await createItem(user.id, item);
-          if (response.status === 200) {
+          const response = await addItemApi(user.id, item);
+          if (response.status === 201) {
             alert("Clothes item added successfully", "");
+            addItemWardrobe(newItem);
+            setIsSuccess(true);
+            fetchItems();
           } else {
             alert("Error adding item", "Please try again");
+            setIsSuccess(false);
           }
         }
       } catch (error) {
         console.error("Error adding item:", error);
       }
     },
-    [user, wardrobe, setWardrobe, addItemWardrobe],
+    [user, addItemWardrobe, fetchItems],
   );
 
   const updateItemById = useCallback(
@@ -53,7 +57,7 @@ export const useItemViewModel = () => {
         );
         setWardrobe(updatedItems);
         if (user) {
-          await updateItem(user.id, itemId, itemData);
+          await updateItemApi(user.id, itemId, itemData);
         }
       } catch (error) {
         console.error("Error updating item:", error);
@@ -66,9 +70,10 @@ export const useItemViewModel = () => {
     async (itemId: number) => {
       try {
         const updatedItems = wardrobe.filter((item) => item.id !== itemId);
-        setWardrobe(updatedItems);
         if (user) {
-          await deleteItem(user.id, itemId);
+          await deleteItemApi(user.id, itemId);
+          setWardrobe(updatedItems);
+          alert("Clothes item deleted successfully", "");
         }
       } catch (error) {
         console.error("Error deleting item:", error);
@@ -78,10 +83,13 @@ export const useItemViewModel = () => {
   );
 
   const getItemById = useCallback(
-    (itemId: number) => {
-      return wardrobe.find((item) => item.id === itemId);
+    async (itemId: number) => {
+      if (user) {
+        const response = await getItemByIdApi(user.id, itemId);
+        return response.data;
+      }
     },
-    [wardrobe],
+    [user],
   );
 
   return {
@@ -91,5 +99,6 @@ export const useItemViewModel = () => {
     updateItemById,
     deleteItemById,
     getItemById,
+    isSuccess,
   };
 };

@@ -1,22 +1,24 @@
-import { useNavigation } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import React from "react";
 
 import ClothesItemForm from "../../components/ClothesItemForm";
 import { useItemViewModel } from "../../viewmodels/ItemViewModel";
 
 export default function UploadClothesScreen() {
-  const navigation = useNavigation();
-  const { addItem } = useItemViewModel();
+  const { addItem, isSuccess } = useItemViewModel();
+  const router = useRouter();
 
   const handleUpload = (values) => {
     addItem(values);
-    navigation.goBack();
+    if (isSuccess) {
+      router.push("/wardrobe");
+    }
   };
 
   return (
     <ClothesItemForm
       onSubmit={handleUpload}
-      onCancel={() => navigation.goBack()}
+      onCancel={() => router.back()}
       title="Upload Clothes"
       icon="cloud-upload"
     />

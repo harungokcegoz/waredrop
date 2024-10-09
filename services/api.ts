@@ -35,29 +35,30 @@ export const deleteUser = (userId: number): Promise<AxiosResponse<User>> =>
   api.delete(apiEndpoints.deleteUser(userId));
 
 // Items
-export const getUserItems = (userId: number): Promise<AxiosResponse<Item[]>> =>
-  api.get(apiEndpoints.getUserItems(userId));
+export const getUserItemsApi = (
+  userId: number,
+): Promise<AxiosResponse<Item[]>> => api.get(apiEndpoints.getUserItems(userId));
 
-export const createItem = (
+export const addItemApi = (
   userId: number,
   itemData: Omit<Item, "id" | "user_id">,
 ): Promise<AxiosResponse<Item>> =>
   api.post(apiEndpoints.createItem(userId), itemData);
 
-export const getItemById = (
+export const getItemByIdApi = (
   userId: number,
   itemId: number,
 ): Promise<AxiosResponse<Item>> =>
   api.get(apiEndpoints.getItemById(userId, itemId));
 
-export const updateItem = (
+export const updateItemApi = (
   userId: number,
   itemId: number,
   itemData: Partial<Item>,
 ): Promise<AxiosResponse<Item>> =>
   api.put(apiEndpoints.updateItem(userId, itemId), itemData);
 
-export const deleteItem = (
+export const deleteItemApi = (
   userId: number,
   itemId: number,
 ): Promise<AxiosResponse<Item>> =>

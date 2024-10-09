@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter, useLocalSearchParams } from "expo-router";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Linking } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -10,35 +10,92 @@ import {
   XStack,
   YStack,
   ScrollView,
-  H2,
   H4,
   View,
   H3,
+  Spinner,
 } from "tamagui";
 
 import { colors } from "../../../styles/preset-styles";
 import { useItemViewModel } from "../../../viewmodels/ItemViewModel";
 
+import { Item } from "@/model/types";
+
 export default function ClothesItemDetail() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
   const { getItemById, deleteItemById } = useItemViewModel();
+  const [item, setItem] = useState<Item | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const item = getItemById(Number(id));
+  useEffect(() => {
+    const fetchItem = async () => {
+      if (!id) {
+        setError("Item ID is missing");
+        setIsLoading(false);
+        return;
+      }
 
-  if (!item) {
+      try {
+        const fetchedItem = await getItemById(Number(id));
+        if (fetchedItem) {
+          setItem(fetchedItem);
+        } else {
+          setError("Item not found");
+        }
+      } catch (err) {
+        setError("Error fetching item");
+        console.error("Error fetching item:", err);
+      } finally {
+        setTimeout(() => {
+          setIsLoading(false);
+        }, 1000);
+      }
+    };
+
+    fetchItem();
+  }, [id, getItemById]);
+
+  const handleOpenLink = () => {
+    if (item?.commercialLink) {
+      Linking.openURL(item.commercialLink);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (item) {
+      try {
+        await deleteItemById(item.id);
+        router.back();
+      } catch (err) {
+        console.error("Error deleting item:", err);
+        alert("Something went wrong on deleting item");
+      }
+    }
+  };
+
+  if (isLoading) {
     return (
-      <SafeAreaView>
-        <Text>Item not found</Text>
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <Spinner size="large" />
       </SafeAreaView>
     );
   }
 
-  const handleOpenLink = () => {
-    if (item.commercial_link) {
-      Linking.openURL(item.commercial_link);
-    }
-  };
+  if (error || !item) {
+    return (
+      <SafeAreaView
+        style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+      >
+        <Text>{error || "Item not found"}</Text>
+      </SafeAreaView>
+    );
+  }
+
+  console.log("hrn", item.imageUrl);
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
@@ -64,20 +121,15 @@ export default function ClothesItemDetail() {
               >
                 <Ionicons name="create-outline" size={24} color="black" />
               </View>
-              <View
-                onPress={() => {
-                  deleteItemById(item.id);
-                  router.back();
-                }}
-              >
+              <View onPress={handleDelete}>
                 <Ionicons name="trash-outline" size={24} color="red" />
               </View>
             </XStack>
           </XStack>
-          <YStack alignItems="center">
+          <YStack alignItems="center" width={300} height={400}>
             <Image
-              source={{ uri: item.image_url }}
-              style={{ width: 300, height: 400 }}
+              source={{ uri: item.imageUrl }}
+              style={{ width: "100%", height: "100%" }}
               contentFit="cover"
               cachePolicy="memory"
             />
@@ -95,7 +147,7 @@ export default function ClothesItemDetail() {
               </H4>
             </XStack>
 
-            {item.commercial_link && (
+            {item.commercialLink && (
               <Button
                 icon={
                   <Ionicons

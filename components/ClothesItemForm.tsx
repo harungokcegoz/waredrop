@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import * as FileSystem from "expo-file-system";
 import { Image } from "expo-image";
 import * as ImagePicker from "expo-image-picker";
 import React, { useState } from "react";
@@ -22,16 +23,16 @@ interface ClothesItemFormProps {
     brand: string;
     price: string;
     category: string;
-    image_url: string;
-    commercial_link?: string;
+    imageUrl: string;
+    commercialLink?: string;
   };
   onSubmit: (values: {
     name: string;
     brand: string;
     price: number;
     category: string;
-    image_url: string;
-    commercial_link?: string;
+    imageUrl: string;
+    commercialLink?: string;
   }) => void;
   onCancel: () => void;
   title: string;
@@ -45,14 +46,30 @@ export default function ClothesItemForm({
   title,
   icon,
 }: ClothesItemFormProps) {
-  const [image, setImage] = useState(initialValues?.image_url || null);
-  const [name, setName] = useState(initialValues?.name || "");
-  const [brand, setBrand] = useState(initialValues?.brand || "");
-  const [price, setPrice] = useState(initialValues?.price || "");
-  const [category, setCategory] = useState(initialValues?.category || "");
-  const [commercialLink, setCommercialLink] = useState(
-    initialValues?.commercial_link || "",
+  const [image, setImage] = useState<string | null>(
+    initialValues?.imageUrl || null,
   );
+  const [name, setName] = useState(initialValues?.name || "Jacket");
+  const [brand, setBrand] = useState(initialValues?.brand || "Off-White");
+  const [price, setPrice] = useState(initialValues?.price || "3999");
+  const [category, setCategory] = useState(
+    initialValues?.category || "Tshirts",
+  );
+  const [commercialLink, setCommercialLink] = useState(
+    initialValues?.commercialLink ||
+      "https://www.farfetch.com/nl/shopping/men/off-white-x-ac-milan-logo-appliqued-varsity-jacket-item-24892862.aspx?storeid=12572",
+  );
+
+  const resetForm = () => {
+    setImage(null);
+    setName("Jacket");
+    setBrand("Off-White");
+    setPrice("3999");
+    setCategory("Tshirts");
+    setCommercialLink(
+      "https://www.farfetch.com/nl/shopping/men/off-white-x-ac-milan-logo-appliqued-varsity-jacket-item-24892862.aspx?storeid=12572",
+    );
+  };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -62,8 +79,13 @@ export default function ClothesItemForm({
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImage(result.assets[0].uri);
+    if (!result.canceled && result.assets[0].uri) {
+      // Always read the file and convert it to base64
+      const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
+      const imageBase64 = `data:image/png;base64,${base64}`;
+      setImage(imageBase64);
     }
   };
 
@@ -78,9 +100,10 @@ export default function ClothesItemForm({
       brand,
       price: parseFloat(price),
       category,
-      image_url: image,
-      commercial_link: commercialLink,
+      imageUrl: image,
+      commercialLink: commercialLink,
     });
+    resetForm();
   };
 
   return (
