@@ -12,7 +12,14 @@ import { useStore } from "../stores/useStore";
 import { alert } from "../utils/utils";
 
 export const useItemViewModel = () => {
-  const { user, wardrobe, setWardrobe, addItemWardrobe } = useStore();
+  const {
+    user,
+    wardrobe,
+    setWardrobe,
+    addWardrobeItem,
+    updateWardrobeItem,
+    deleteWardrobeItem,
+  } = useStore();
   const [isSuccess, setIsSuccess] = useState(false);
 
   const fetchItems = useCallback(async () => {
@@ -34,7 +41,7 @@ export const useItemViewModel = () => {
           const response = await addItemApi(user.id, item);
           if (response.status === 201) {
             alert("Clothes item added successfully", "");
-            addItemWardrobe(newItem);
+            addWardrobeItem(newItem);
             setIsSuccess(true);
             fetchItems();
           } else {
@@ -46,18 +53,20 @@ export const useItemViewModel = () => {
         console.error("Error adding item:", error);
       }
     },
-    [user, addItemWardrobe, fetchItems],
+    [user, addWardrobeItem, fetchItems],
   );
 
   const updateItemById = useCallback(
-    async (itemId: number, itemData: Partial<Item>) => {
+    async (itemId: number, itemData: Item) => {
       try {
-        const updatedItems = wardrobe.map((item) =>
-          item.id === itemId ? { ...item, ...itemData } : item,
-        );
-        setWardrobe(updatedItems);
         if (user) {
-          await updateItemApi(user.id, itemId, itemData);
+          const response = await updateItemApi(user.id, itemId, itemData);
+          if (response.status === 200) {
+            alert("Clothes item updated successfully", "");
+            updateWardrobeItem(itemData);
+          } else {
+            alert("Error updating item", "Please try again");
+          }
         }
       } catch (error) {
         console.error("Error updating item:", error);
@@ -69,11 +78,14 @@ export const useItemViewModel = () => {
   const deleteItemById = useCallback(
     async (itemId: number) => {
       try {
-        const updatedItems = wardrobe.filter((item) => item.id !== itemId);
         if (user) {
-          await deleteItemApi(user.id, itemId);
-          setWardrobe(updatedItems);
-          alert("Clothes item deleted successfully", "");
+          const response = await deleteItemApi(user.id, itemId);
+          if (response.status === 200) {
+            deleteWardrobeItem(itemId);
+            alert("Clothes item deleted successfully", "");
+          } else {
+            alert("Error deleting item", "Please try again");
+          }
         }
       } catch (error) {
         console.error("Error deleting item:", error);

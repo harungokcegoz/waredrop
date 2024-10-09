@@ -10,9 +10,7 @@ export default function UploadClothesScreen() {
 
   const handleUpload = (values) => {
     addItem(values);
-    if (isSuccess) {
-      router.push("/wardrobe");
-    }
+    router.push("/wardrobe");
   };
 
   return (

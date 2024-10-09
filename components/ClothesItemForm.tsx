@@ -23,16 +23,16 @@ interface ClothesItemFormProps {
     brand: string;
     price: string;
     category: string;
-    imageUrl: string;
-    commercialLink?: string;
+    image_url: string;
+    commercial_link?: string;
   };
   onSubmit: (values: {
     name: string;
     brand: string;
     price: number;
     category: string;
-    imageUrl: string;
-    commercialLink?: string;
+    image_url: string;
+    commercial_link?: string;
   }) => void;
   onCancel: () => void;
   title: string;
@@ -47,35 +47,29 @@ export default function ClothesItemForm({
   icon,
 }: ClothesItemFormProps) {
   const [image, setImage] = useState<string | null>(
-    initialValues?.imageUrl || null,
+    initialValues?.image_url || null,
   );
-  const [name, setName] = useState(initialValues?.name || "Jacket");
-  const [brand, setBrand] = useState(initialValues?.brand || "Off-White");
-  const [price, setPrice] = useState(initialValues?.price || "3999");
-  const [category, setCategory] = useState(
-    initialValues?.category || "Tshirts",
-  );
-  const [commercialLink, setCommercialLink] = useState(
-    initialValues?.commercialLink ||
-      "https://www.farfetch.com/nl/shopping/men/off-white-x-ac-milan-logo-appliqued-varsity-jacket-item-24892862.aspx?storeid=12572",
+  const [name, setName] = useState(initialValues?.name || "");
+  const [brand, setBrand] = useState(initialValues?.brand || "");
+  const [price, setPrice] = useState(initialValues?.price || "");
+  const [category, setCategory] = useState(initialValues?.category || "");
+  const [commercial_link, setcommercial_link] = useState(
+    initialValues?.commercial_link || "",
   );
 
   const resetForm = () => {
     setImage(null);
-    setName("Jacket");
-    setBrand("Off-White");
-    setPrice("3999");
-    setCategory("Tshirts");
-    setCommercialLink(
-      "https://www.farfetch.com/nl/shopping/men/off-white-x-ac-milan-logo-appliqued-varsity-jacket-item-24892862.aspx?storeid=12572",
-    );
+    setName("");
+    setBrand("");
+    setPrice("");
+    setCategory("");
+    setcommercial_link("");
   };
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 1,
     });
 
@@ -100,8 +94,8 @@ export default function ClothesItemForm({
       brand,
       price: parseFloat(price),
       category,
-      imageUrl: image,
-      commercialLink: commercialLink,
+      image_url: image,
+      commercial_link: commercial_link,
     });
     resetForm();
   };
@@ -197,8 +191,8 @@ export default function ClothesItemForm({
               <Label fontWeight="bold">Commercial Link (optional)</Label>
               <Input
                 placeholder="e.g https://example.com/product"
-                value={commercialLink}
-                onChangeText={setCommercialLink}
+                value={commercial_link}
+                onChangeText={setcommercial_link}
               />
             </YStack>
           </YStack>

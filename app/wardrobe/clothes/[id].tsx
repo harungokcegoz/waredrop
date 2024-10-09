@@ -58,8 +58,8 @@ export default function ClothesItemDetail() {
   }, [id, getItemById]);
 
   const handleOpenLink = () => {
-    if (item?.commercialLink) {
-      Linking.openURL(item.commercialLink);
+    if (item?.commercial_link) {
+      Linking.openURL(item.commercial_link);
     }
   };
 
@@ -94,9 +94,7 @@ export default function ClothesItemDetail() {
       </SafeAreaView>
     );
   }
-
-  console.log("hrn", item.imageUrl);
-
+  console.log("hrn", item.commercial_link);
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <YStack flex={1}>
@@ -112,9 +110,10 @@ export default function ClothesItemDetail() {
             <XStack gap="$4">
               <View
                 onPress={() =>
-                  router.push(
-                    `/wardrobe/clothes/edit-clothes-item?id=${item.id}`,
-                  )
+                  router.push({
+                    pathname: "/wardrobe/clothes/edit-clothes/[itemId]",
+                    params: { itemId: item.id },
+                  })
                 }
                 marginRight="$2"
                 backgroundColor="white"
@@ -126,11 +125,11 @@ export default function ClothesItemDetail() {
               </View>
             </XStack>
           </XStack>
-          <YStack alignItems="center" width={300} height={400}>
+          <YStack alignItems="center" width="100%">
             <Image
-              source={{ uri: item.imageUrl }}
-              style={{ width: "100%", height: "100%" }}
-              contentFit="cover"
+              source={{ uri: item.image_url }}
+              style={{ width: 300, height: 400 }}
+              contentFit="contain"
               cachePolicy="memory"
             />
           </YStack>
@@ -147,7 +146,7 @@ export default function ClothesItemDetail() {
               </H4>
             </XStack>
 
-            {item.commercialLink && (
+            {item.commercial_link && (
               <Button
                 icon={
                   <Ionicons

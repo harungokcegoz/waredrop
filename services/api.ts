@@ -42,8 +42,9 @@ export const getUserItemsApi = (
 export const addItemApi = (
   userId: number,
   itemData: Omit<Item, "id" | "user_id">,
-): Promise<AxiosResponse<Item>> =>
-  api.post(apiEndpoints.createItem(userId), itemData);
+): Promise<AxiosResponse<Item>> => {
+  return api.post(apiEndpoints.createItem(userId), itemData);
+};
 
 export const getItemByIdApi = (
   userId: number,

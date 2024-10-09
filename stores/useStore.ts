@@ -11,7 +11,9 @@ interface AppState {
   setUser: (user: User | null) => void;
   wardrobe: Item[];
   setWardrobe: (items: Item[]) => void;
-  addItemWardrobe: (item: Item) => void;
+  addWardrobeItem: (item: Item) => void;
+  updateWardrobeItem: (item: Item) => void;
+  deleteWardrobeItem: (itemId: number) => void;
 }
 
 export const useStore = create(
@@ -21,8 +23,16 @@ export const useStore = create(
       wardrobe: [],
       setUser: (user: User | null) => set({ user }),
       setWardrobe: (items: Item[]) => set({ wardrobe: items }),
-      addItemWardrobe: (item: Item) =>
+      addWardrobeItem: (item: Item) =>
         set((state) => ({ wardrobe: [...state.wardrobe, item] })),
+      updateWardrobeItem: (item: Item) =>
+        set((state) => ({
+          wardrobe: state.wardrobe.map((i) => (i.id === item.id ? item : i)),
+        })),
+      deleteWardrobeItem: (itemId: number) =>
+        set((state) => ({
+          wardrobe: state.wardrobe.filter((i) => i.id !== itemId),
+        })),
     }),
     {
       name: "wardrop-storage",

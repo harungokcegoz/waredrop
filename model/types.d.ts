@@ -11,10 +11,10 @@ export interface Item {
   name: string;
   category: string;
   color: string;
-  imageUrl: string;
+  image_url: string;
   brand: string;
   price: number;
-  commercialLink?: string;
+  commercial_link?: string;
 }
 
 export interface Outfit {

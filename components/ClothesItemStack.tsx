@@ -27,7 +27,7 @@ const ClothesItemStack: React.FC<ClothesItemStackProps> = ({ items }) => {
       }}
     >
       <Image
-        source={{ uri: item.imageUrl }}
+        source={{ uri: item.image_url }}
         style={{ width: "100%", height: "100%" }}
         contentFit="cover"
         cachePolicy="memory"
