@@ -14,7 +14,6 @@ import {
   ScrollView,
 } from "tamagui";
 
-import { getImage } from "../assets/imagesMap";
 import { colors } from "../styles/preset-styles";
 
 interface ClothesItemFormProps {
@@ -118,7 +117,7 @@ export default function ClothesItemForm({
           <View onPress={pickImage} alignItems="center" justifyContent="center">
             {image ? (
               <Image
-                source={getImage(image)}
+                source={{ uri: image }}
                 style={{ width: 300, height: 300 }}
                 contentFit="contain"
                 cachePolicy="memory"

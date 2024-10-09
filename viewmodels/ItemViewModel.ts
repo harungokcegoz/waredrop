@@ -1,5 +1,4 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { Item } from "../model/types";
 import {
@@ -9,72 +8,50 @@ import {
   deleteItem,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
-
-const STORAGE_KEY = "@wardrobe_items";
+import { alert } from "../utils/utils";
 
 export const useItemViewModel = () => {
-  const { user } = useStore();
-  const [items, setItems] = useState<Item[]>([]);
-
-  const saveItemsToStorage = async (updatedItems: Item[]) => {
-    try {
-      await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(updatedItems));
-    } catch (error) {
-      console.error("Error saving items to storage:", error);
-    }
-  };
+  const { user, wardrobe, setWardrobe, addItemWardrobe } = useStore();
 
   const fetchItems = useCallback(async () => {
     try {
-      const storedItems = await AsyncStorage.getItem(STORAGE_KEY);
-      if (storedItems) {
-        setItems(JSON.parse(storedItems));
-      }
-
       if (user) {
         const response = await getUserItems(user.id);
-        setItems(response.data);
-        saveItemsToStorage(response.data);
+        setWardrobe(response.data);
       }
     } catch (error) {
       console.error("Error fetching items:", error);
     }
-  }, [user, setItems]);
+  }, [user, setWardrobe]);
 
   const addItem = useCallback(
     async (item: Omit<Item, "id" | "user_id">) => {
       try {
         const newItem = { ...item, id: Date.now(), user_id: user?.id || 0 };
-        const updatedItems = [...items, newItem];
-        setItems(updatedItems);
-        saveItemsToStorage(updatedItems);
+        addItemWardrobe(newItem);
 
         if (user) {
           const response = await createItem(user.id, item);
-          const serverItem = response.data;
-          setItems((items) =>
-            items.map((i) => (i.id === newItem.id ? serverItem : i)),
-          );
-          saveItemsToStorage(
-            items.map((i) => (i.id === newItem.id ? serverItem : i)),
-          );
+          if (response.status === 200) {
+            alert("Clothes item added successfully", "");
+          } else {
+            alert("Error adding item", "Please try again");
+          }
         }
       } catch (error) {
         console.error("Error adding item:", error);
       }
     },
-    [user, items, setItems],
+    [user, wardrobe, setWardrobe, addItemWardrobe],
   );
 
   const updateItemById = useCallback(
     async (itemId: number, itemData: Partial<Item>) => {
       try {
-        const updatedItems = items.map((item) =>
+        const updatedItems = wardrobe.map((item) =>
           item.id === itemId ? { ...item, ...itemData } : item,
         );
-        setItems(updatedItems);
-        saveItemsToStorage(updatedItems);
-
+        setWardrobe(updatedItems);
         if (user) {
           await updateItem(user.id, itemId, itemData);
         }
@@ -82,16 +59,14 @@ export const useItemViewModel = () => {
         console.error("Error updating item:", error);
       }
     },
-    [user, items, setItems],
+    [user, wardrobe, setWardrobe],
   );
 
   const deleteItemById = useCallback(
     async (itemId: number) => {
       try {
-        const updatedItems = items.filter((item) => item.id !== itemId);
-        setItems(updatedItems);
-        saveItemsToStorage(updatedItems);
-
+        const updatedItems = wardrobe.filter((item) => item.id !== itemId);
+        setWardrobe(updatedItems);
         if (user) {
           await deleteItem(user.id, itemId);
         }
@@ -99,18 +74,18 @@ export const useItemViewModel = () => {
         console.error("Error deleting item:", error);
       }
     },
-    [user, items, setItems],
+    [user, wardrobe, setWardrobe],
   );
 
   const getItemById = useCallback(
     (itemId: number) => {
-      return items.find((item) => item.id === itemId);
+      return wardrobe.find((item) => item.id === itemId);
     },
-    [items],
+    [wardrobe],
   );
 
   return {
-    items,
+    wardrobe,
     fetchItems,
     addItem,
     updateItemById,
