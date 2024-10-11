@@ -1,10 +1,7 @@
 import { useRouter, useLocalSearchParams } from "expo-router";
-import React, { useEffect, useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, XStack, YStack, ScrollView, Input, Button } from "tamagui";
+import React, { useEffect, useState, useCallback } from "react";
 
-import { colors } from "../../../styles/preset-styles";
+import OutfitForm from "../../../components/OutfitForm";
 import { useItemViewModel } from "../../../viewmodels/ItemViewModel";
 import { useOutfitViewModel } from "../../../viewmodels/OutfitViewModel";
 
@@ -20,25 +17,30 @@ export default function EditOutfit() {
   const [tags, setTags] = useState<string>("");
 
   useEffect(() => {
-    fetchItems();
-    const fetchOutfit = async () => {
+    const fetchOutfitAndItems = async () => {
+      await fetchItems();
       if (id) {
         const fetchedOutfit = await getOutfitById(Number(id));
-        setOutfit(fetchedOutfit);
-        setSelectedItems(fetchedOutfit.items);
-        setTags(fetchedOutfit.tags.join(", "));
+        if (fetchedOutfit) {
+          setOutfit(fetchedOutfit);
+          setSelectedItems(fetchedOutfit.items);
+          setTags(fetchedOutfit.tags.join(", "));
+        }
       }
     };
-    fetchOutfit();
-  }, [id]);
+    fetchOutfitAndItems();
+  }, [id, fetchItems, getOutfitById]);
 
-  const toggleItem = (item: Item) => {
-    setSelectedItems((prev) =>
-      prev.some((i) => i.id === item.id)
-        ? prev.filter((i) => i.id !== item.id)
-        : [...prev, item]
-    );
-  };
+  const toggleItem = useCallback((item: Item, category: string) => {
+    setSelectedItems((prev) => {
+      const filteredItems = prev.filter((i) => i.category !== category);
+      if (prev.some((i) => i.id === item.id)) {
+        return filteredItems;
+      } else {
+        return [...filteredItems, item];
+      }
+    });
+  }, []);
 
   const handleSave = async () => {
     if (outfit) {
@@ -51,48 +53,16 @@ export default function EditOutfit() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
-        <XStack justifyContent="space-between" padding="$4" alignItems="center">
-          <TouchableOpacity onPress={() => router.back()}>
-            <Text>Cancel</Text>
-          </TouchableOpacity>
-          <Text fontSize="$6" fontWeight="bold" fontFamily="jost">
-            Edit Outfit
-          </Text>
-          <TouchableOpacity onPress={handleSave}>
-            <Text color={colors.primary}>Save</Text>
-          </TouchableOpacity>
-        </XStack>
-        <YStack space="$4" padding="$4">
-          <Input
-            value={tags}
-            onChangeText={setTags}
-            placeholder="Enter tags (comma-separated)"
-          />
-          <Text fontSize="$5" fontWeight="bold" fontFamily="jost">
-            Select Items
-          </Text>
-          <XStack flexWrap="wrap" justifyContent="space-around">
-            {wardrobe.map((item) => (
-              <TouchableOpacity key={item.id} onPress={() => toggleItem(item)}>
-                <Image
-                  source={{ uri: item.image_url }}
-                  style={{
-                    width: 100,
-                    height: 133,
-                    margin: 4,
-                    borderWidth: 2,
-                    borderColor: selectedItems.some((i) => i.id === item.id)
-                      ? colors.secondary
-                      : "transparent",
-                  }}
-                />
-              </TouchableOpacity>
-            ))}
-          </XStack>
-        </YStack>
-      </ScrollView>
-    </SafeAreaView>
+    <OutfitForm
+      title="Edit Outfit"
+      tags={tags}
+      setTags={setTags}
+      wardrobe={wardrobe}
+      selectedItems={selectedItems}
+      toggleItem={toggleItem}
+      onCancel={() => router.back()}
+      onSave={handleSave}
+      saveButtonText="Save"
+    />
   );
 }

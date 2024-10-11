@@ -1,9 +1,20 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Image } from "expo-image";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { Image, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { Text, XStack, YStack, ScrollView, H3, Spinner } from "tamagui";
+import {
+  Text,
+  XStack,
+  YStack,
+  ScrollView,
+  H3,
+  Spinner,
+  View,
+  Spacer,
+  H4,
+} from "tamagui";
 
 import { colors } from "../../styles/preset-styles";
 import { useOutfitViewModel } from "../../viewmodels/OutfitViewModel";
@@ -55,10 +66,10 @@ export default function OutfitDetail() {
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
-          <XStack space="$2">
+          <XStack gap="$2">
             {outfit.tags.map((tag) => (
               <Text key={tag} color={colors.secondary} fontFamily="jost">
-                {tag}
+                #{tag}
               </Text>
             ))}
           </XStack>
@@ -70,27 +81,37 @@ export default function OutfitDetail() {
         </XStack>
         <YStack gap="$4" padding="$4">
           {Object.values(outfit.items).map((item) => (
-            <TouchableOpacity
+            <View
               key={item.id}
-              onPress={() => router.push(`/wardrobe/clothes/${item.id}`)}
+              onPress={() =>
+                router.push({
+                  pathname: "/wardrobe/clothes/[id]",
+                  params: { id: item.id },
+                })
+              }
+              height={200}
+              justifyContent="center"
             >
-              <XStack space="$4" alignItems="center">
+              <XStack gap="$4" alignItems="center">
                 <Image
+                  contentFit="contain"
+                  cachePolicy="disk"
                   source={{ uri: item.image_url }}
-                  style={{ width: 300, height: 400 }}
+                  style={{ width: 150, height: 180 }}
                 />
                 <YStack>
-                  <H3 fontFamily="jost" color={colors.textBlack}>
+                  <H4 fontFamily="jost" color={colors.textBlack}>
                     {item.brand}
-                  </H3>
+                  </H4>
                   <Text fontFamily="jost" color={colors.textGray}>
                     {item.category}
                   </Text>
                 </YStack>
               </XStack>
-            </TouchableOpacity>
+            </View>
           ))}
         </YStack>
+        <Spacer size="$10" />
       </ScrollView>
     </SafeAreaView>
   );

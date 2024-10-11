@@ -1,38 +1,58 @@
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import { router } from "expo-router";
-import React from "react";
+import React, { useCallback } from "react";
 import { Card, View, Spacer } from "tamagui";
 
 import { Item } from "../model/types";
 
-import { pressAnimationStyle } from "@/styles/preset-styles";
+import { colors, pressAnimationStyle } from "@/styles/preset-styles";
 
 interface ClothesItemStackProps {
   items: Item[];
+  onItemPress: (item: Item) => void;
+  selectedItems: Item[];
+  horizontal?: boolean;
 }
 
-const ClothesItemStack: React.FC<ClothesItemStackProps> = ({ items }) => {
-  const renderItem = ({ item }: { item: Item }) => (
-    <Card
-      marginRight="$2"
-      width={150}
-      height={200}
-      {...pressAnimationStyle}
-      onPress={() => {
-        router.push({
-          pathname: "/wardrobe/clothes/[id]",
-          params: { id: item.id },
-        });
-      }}
-    >
-      <Image
-        source={{ uri: item.image_url }}
-        style={{ width: "100%", height: "100%" }}
-        contentFit="cover"
-        cachePolicy="memory"
-      />
-    </Card>
+const ClothesItemStack: React.FC<ClothesItemStackProps> = ({
+  items,
+  onItemPress,
+  selectedItems,
+  horizontal = true,
+}) => {
+  const isItemSelected = useCallback(
+    (item: Item) => selectedItems.some((i) => i.id === item.id),
+    [selectedItems],
+  );
+
+  const renderItem = useCallback(
+    ({ item }: { item: Item }) => {
+      const isSelected = isItemSelected(item);
+      return (
+        <Card
+          marginRight="$4"
+          marginBottom="$2"
+          width={150}
+          height={200}
+          {...pressAnimationStyle}
+          onPress={() => onItemPress(item)}
+          borderWidth={isSelected ? 3 : 0}
+          borderColor={isSelected ? colors.primary : "transparent"}
+          borderRadius="$8"
+        >
+          <Image
+            source={{ uri: item.image_url }}
+            style={{
+              width: "100%",
+              height: "100%",
+            }}
+            contentFit="cover"
+            cachePolicy="memory"
+          />
+        </Card>
+      );
+    },
+    [isItemSelected, onItemPress],
   );
 
   return (
@@ -41,10 +61,12 @@ const ClothesItemStack: React.FC<ClothesItemStackProps> = ({ items }) => {
         data={items}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
-        horizontal
+        horizontal={horizontal}
         estimatedItemSize={150}
         showsHorizontalScrollIndicator={false}
-        ListHeaderComponent={<Spacer size="$4" />}
+        ListHeaderComponent={horizontal ? <Spacer size="$4" /> : null}
+        ListFooterComponent={horizontal ? <Spacer size="$4" /> : null}
+        extraData={selectedItems}
       />
     </View>
   );
