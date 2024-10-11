@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 
 import { Outfit } from "../model/types";
 import {
@@ -6,12 +6,12 @@ import {
   createOutfit,
   updateOutfit,
   deleteOutfit,
+  getOutfitById as getOutfitByIdApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 
 export const useOutfitViewModel = () => {
-  const { user } = useStore();
-  const [outfits, setOutfits] = useState<Outfit[]>([]);
+  const { user, outfits, setOutfits } = useStore();
 
   const fetchOutfits = useCallback(async () => {
     if (!user) return;
@@ -66,11 +66,25 @@ export const useOutfitViewModel = () => {
     [user, outfits, setOutfits],
   );
 
+  const getOutfitById = useCallback(
+    async (outfitId: number) => {
+      if (!user) return null;
+      try {
+        const response = await getOutfitByIdApi(user.id, outfitId);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching outfit:", error);
+        return null;
+      }
+    },
+    [user],
+  );
+
   return {
-    outfits,
     fetchOutfits,
     addOutfit,
     updateOutfitById,
     deleteOutfitById,
+    getOutfitById,
   };
 };

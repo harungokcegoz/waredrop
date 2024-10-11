@@ -2,7 +2,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
-import { Item, User } from "../model/types";
+import { Item, Outfit, User } from "../model/types";
 
 import { initialMockUser } from "@/constants/constants";
 
@@ -14,6 +14,11 @@ interface AppState {
   addWardrobeItem: (item: Item) => void;
   updateWardrobeItem: (item: Item) => void;
   deleteWardrobeItem: (itemId: number) => void;
+  outfits: Outfit[];
+  setOutfits: (outfits: Outfit[]) => void;
+  addOutfit: (outfit: Outfit) => void;
+  updateOutfitById: (outfitId: number, outfitData: Partial<Outfit>) => void;
+  deleteOutfit: (outfitId: number) => void;
 }
 
 export const useStore = create(
@@ -21,6 +26,7 @@ export const useStore = create(
     (set) => ({
       user: initialMockUser,
       wardrobe: [],
+      outfits: [],
       setUser: (user: User | null) => set({ user }),
       setWardrobe: (items: Item[]) => set({ wardrobe: items }),
       addWardrobeItem: (item: Item) =>
@@ -32,6 +38,19 @@ export const useStore = create(
       deleteWardrobeItem: (itemId: number) =>
         set((state) => ({
           wardrobe: state.wardrobe.filter((i) => i.id !== itemId),
+        })),
+      setOutfits: (outfits: Outfit[]) => set({ outfits }),
+      addOutfit: (outfit: Outfit) =>
+        set((state) => ({ outfits: [...state.outfits, outfit] })),
+      updateOutfitById: (outfitId: number, outfitData: Partial<Outfit>) =>
+        set((state) => ({
+          outfits: state.outfits.map((o) =>
+            o.id === outfitId ? { ...o, ...outfitData } : o,
+          ),
+        })),
+      deleteOutfit: (outfitId: number) =>
+        set((state) => ({
+          outfits: state.outfits.filter((o) => o.id !== outfitId),
         })),
     }),
     {

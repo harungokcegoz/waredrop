@@ -21,7 +21,7 @@ export interface Outfit {
   id: number;
   user_id: number;
   name: string;
-  description: string;
+  tags: string[];
   items: Item[];
 }
 

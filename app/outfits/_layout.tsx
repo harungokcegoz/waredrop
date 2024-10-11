@@ -1,13 +1,11 @@
-import React from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text } from "tamagui";
+import { Stack } from "expo-router";
 
 export default function OutfitsScreen() {
   return (
-    <SafeAreaView>
-      <View>
-        <Text>OutfitsScreen</Text>
-      </View>
-    </SafeAreaView>
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" />
+      <Stack.Screen name="[id]" />
+      <Stack.Screen name="create" />
+    </Stack>
   );
 }

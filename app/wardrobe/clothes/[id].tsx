@@ -92,7 +92,7 @@ export default function ClothesItemDetail() {
       </SafeAreaView>
     );
   }
-  console.log("hrn", item.commercial_link);
+
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <YStack flex={1}>
