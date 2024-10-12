@@ -2,14 +2,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import React, { useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, Alert } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Text,
   XStack,
   YStack,
   ScrollView,
-  H3,
   Spinner,
   View,
   Spacer,
@@ -24,7 +23,7 @@ import { Outfit } from "@/model/types";
 export default function OutfitDetail() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
-  const { getOutfitById } = useOutfitViewModel();
+  const { getOutfitById, deleteOutfitById } = useOutfitViewModel();
   const [outfit, setOutfit] = useState<Outfit | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,7 +36,27 @@ export default function OutfitDetail() {
       }
     };
     fetchOutfit();
-  }, [id]);
+  }, [id, getOutfitById]);
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Outfit",
+      "Are you sure you want to delete this outfit?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Delete",
+          style: "destructive",
+          onPress: async () => {
+            if (outfit) {
+              await deleteOutfitById(outfit.id);
+              router.back();
+            }
+          },
+        },
+      ],
+    );
+  };
 
   if (isLoading) {
     return (
@@ -66,6 +85,7 @@ export default function OutfitDetail() {
           <TouchableOpacity onPress={() => router.back()}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
+
           <XStack gap="$2">
             {outfit.tags.map((tag) => (
               <Text key={tag} color={colors.secondary} fontFamily="jost">
@@ -73,13 +93,21 @@ export default function OutfitDetail() {
               </Text>
             ))}
           </XStack>
-          <TouchableOpacity
-            onPress={() => router.push(`/outfits/edit/${outfit.id}`)}
-          >
-            <Ionicons name="create-outline" size={24} color="black" />
-          </TouchableOpacity>
+          <XStack gap="$4">
+            <TouchableOpacity
+              onPress={() => router.push(`/outfits/edit/${outfit.id}`)}
+            >
+              <Ionicons name="create-outline" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleDelete}>
+              <Ionicons name="trash-outline" size={24} color="red" />
+            </TouchableOpacity>
+          </XStack>
         </XStack>
         <YStack gap="$4" padding="$4">
+          <H4 fontFamily="jost" color={colors.textBlack}>
+            {outfit.name}
+          </H4>
           {Object.values(outfit.items).map((item) => (
             <View
               key={item.id}

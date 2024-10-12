@@ -10,7 +10,7 @@ import { colors, pressAnimationStyle } from "@/styles/preset-styles";
 interface ClothesItemStackProps {
   items: Item[];
   onItemPress: (item: Item) => void;
-  selectedItems: Item[];
+  selectedItems?: Item[];
   horizontal?: boolean;
 }
 
@@ -21,7 +21,7 @@ const ClothesItemStack: React.FC<ClothesItemStackProps> = ({
   horizontal = true,
 }) => {
   const isItemSelected = useCallback(
-    (item: Item) => selectedItems.some((i) => i.id === item.id),
+    (item: Item) => selectedItems?.some((i) => i.id === item.id),
     [selectedItems],
   );
 

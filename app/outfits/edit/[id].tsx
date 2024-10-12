@@ -15,6 +15,7 @@ export default function EditOutfit() {
   const [outfit, setOutfit] = useState<Outfit | null>(null);
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [tags, setTags] = useState<string>("");
+  const [name, setName] = useState<string>("");
 
   useEffect(() => {
     const fetchOutfitAndItems = async () => {
@@ -25,6 +26,7 @@ export default function EditOutfit() {
           setOutfit(fetchedOutfit);
           setSelectedItems(fetchedOutfit.items);
           setTags(fetchedOutfit.tags.join(", "));
+          setName(fetchedOutfit.name);
         }
       }
     };
@@ -42,10 +44,11 @@ export default function EditOutfit() {
     });
   }, []);
 
-  const handleSave = async () => {
+  const handleSave = async (outfitName: string) => {
     if (outfit) {
       await updateOutfitById(outfit.id, {
-        items: selectedItems,
+        name: outfitName,
+        itemIds: selectedItems.map(item => item.id),
         tags: tags.split(",").map((tag) => tag.trim()),
       });
       router.back();
@@ -55,6 +58,8 @@ export default function EditOutfit() {
   return (
     <OutfitForm
       title="Edit Outfit"
+      name={name}
+      setName={setName}
       tags={tags}
       setTags={setTags}
       wardrobe={wardrobe}

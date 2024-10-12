@@ -13,10 +13,11 @@ export default function CreateOutfit() {
   const { addOutfit } = useOutfitViewModel();
   const [selectedItems, setSelectedItems] = useState<Item[]>([]);
   const [tags, setTags] = useState<string>("");
+  const [name, setName] = useState<string>("");
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [fetchItems]);
 
   const toggleItem = useCallback((item: Item, category: string) => {
     setSelectedItems((prev) => {
@@ -29,10 +30,10 @@ export default function CreateOutfit() {
     });
   }, []);
 
-  const handleCreate = async () => {
+  const handleCreate = async (outfitName: string) => {
     await addOutfit({
-      name: "New Outfit",
-      items: selectedItems,
+      name: outfitName,
+      itemIds: selectedItems.map(item => item.id),
       tags: tags.split(",").map((tag) => tag.trim()),
     });
     router.back();
@@ -41,6 +42,8 @@ export default function CreateOutfit() {
   return (
     <OutfitForm
       title="Create Outfit"
+      name={name}
+      setName={setName}
       tags={tags}
       setTags={setTags}
       wardrobe={wardrobe}
@@ -49,7 +52,6 @@ export default function CreateOutfit() {
       onCancel={() => router.back()}
       onSave={handleCreate}
       saveButtonText="Create"
-      isEditing={false}
     />
   );
 }

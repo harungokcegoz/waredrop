@@ -9,7 +9,7 @@ import {
   getOutfitById as getOutfitByIdApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
-
+import { alert } from "../utils/utils";
 export const useOutfitViewModel = () => {
   const { user, outfits, setOutfits } = useStore();
 
@@ -24,30 +24,45 @@ export const useOutfitViewModel = () => {
   }, [user, setOutfits]);
 
   const addOutfit = useCallback(
-    async (outfit: Omit<Outfit, "id" | "user_id">) => {
+    async (outfit: { name: string; tags: string[]; itemIds: number[] }) => {
       if (!user) return;
       try {
         const response = await createOutfit(user.id, outfit);
-        setOutfits([...outfits, response.data]);
+        if (response.status === 201) {
+          setOutfits([...outfits, response.data]);
+          alert("Outfit added successfully", "");
+        } else {
+          alert("Error adding outfit", "Please try again");
+        }
       } catch (error) {
         console.error("Error adding outfit:", error);
+        alert("Error adding outfit", "Please try again");
       }
     },
     [user, outfits, setOutfits],
   );
 
   const updateOutfitById = useCallback(
-    async (outfitId: number, outfitData: Partial<Outfit>) => {
+    async (
+      outfitId: number,
+      outfitData: { name: string; tags: string[]; itemIds: number[] },
+    ) => {
       if (!user) return;
       try {
         const response = await updateOutfit(user.id, outfitId, outfitData);
-        setOutfits(
-          outfits.map((outfit: Outfit) =>
-            outfit.id === outfitId ? response.data : outfit,
-          ),
-        );
+        if (response.status === 201) {
+          setOutfits(
+            outfits.map((outfit: Outfit) =>
+              outfit.id === outfitId ? response.data : outfit,
+            ),
+          );
+          alert("Outfit updated successfully", "");
+        } else {
+          alert("Error updating outfit", "Please try again");
+        }
       } catch (error) {
         console.error("Error updating outfit:", error);
+        alert("Error updating outfit", "Please try again");
       }
     },
     [user, outfits, setOutfits],
@@ -57,10 +72,18 @@ export const useOutfitViewModel = () => {
     async (outfitId: number) => {
       if (!user) return;
       try {
-        await deleteOutfit(user.id, outfitId);
-        setOutfits(outfits.filter((outfit: Outfit) => outfit.id !== outfitId));
+        const response = await deleteOutfit(user.id, outfitId);
+        if (response.status === 200) {
+          setOutfits(
+            outfits.filter((outfit: Outfit) => outfit.id !== outfitId),
+          );
+          alert("Outfit deleted successfully", "");
+        } else {
+          alert("Error deleting outfit", "Please try again");
+        }
       } catch (error) {
         console.error("Error deleting outfit:", error);
+        alert("Error deleting outfit", "Please try again");
       }
     },
     [user, outfits, setOutfits],
