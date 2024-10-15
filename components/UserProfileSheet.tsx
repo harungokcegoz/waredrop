@@ -1,12 +1,13 @@
-import { Ionicons } from "@expo/vector-icons";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { TouchableOpacity } from "react-native";
-import { Sheet, ScrollView } from "tamagui";
+import { Sheet, ScrollView, Button } from "tamagui";
+import { Ionicons } from "@expo/vector-icons";
 
 import UserProfileContent from "./UserProfileContent";
 
 import { User, Post } from "@/model/types";
 import { useUserViewModel } from "@/viewmodels/UserViewModel";
+import { useStore } from "@/stores/useStore";
 
 interface UserProfileSheetProps {
   userId: number;
@@ -19,9 +20,11 @@ export default function UserProfileSheet({
   isOpen,
   onClose,
 }: UserProfileSheetProps) {
-  const { getUserProfile, getUserStats, getUserPosts } = useUserViewModel();
+  const { getUserProfile, getUserStats, getUserPosts, followUser, unfollowUser, isFollowingUser } = useUserViewModel();
   const [user, setUser] = useState<User | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const { user: currentUser } = useStore();
 
   useEffect(() => {
     if (isOpen) {
@@ -38,7 +41,28 @@ export default function UserProfileSheet({
     }
     setUser(userProfile);
     setPosts(userPosts);
+
+    if (currentUser && currentUser.id !== userId) {
+      const following = await isFollowingUser(userId);
+      setIsFollowing(following);
+    }
   };
+
+  const handleFollowToggle = useCallback(async () => {
+    if (!user || !currentUser) return;
+
+    try {
+      if (isFollowing) {
+        await unfollowUser(user.id);
+      } else {
+        await followUser(user.id);
+      }
+      setIsFollowing(!isFollowing);
+      fetchUserData(); // Refresh user data after follow/unfollow
+    } catch (error) {
+      console.error("Error toggling follow status:", error);
+    }
+  }, [user, currentUser, isFollowing, followUser, unfollowUser]);
 
   return (
     <Sheet
@@ -61,7 +85,14 @@ export default function UserProfileSheet({
         </TouchableOpacity>
         <ScrollView>
           {user && (
-            <UserProfileContent user={user} posts={posts} showStats={false} />
+            <>
+              <UserProfileContent user={user} posts={posts} showStats={false} />
+              {currentUser && currentUser.id !== userId && (
+                <Button onPress={handleFollowToggle}>
+                  {isFollowing ? "Unfollow" : "Follow"}
+                </Button>
+              )}
+            </>
           )}
         </ScrollView>
       </Sheet.Frame>

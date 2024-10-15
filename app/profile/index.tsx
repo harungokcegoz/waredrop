@@ -1,7 +1,8 @@
 import { router } from "expo-router";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, H4 } from "tamagui";
+import { ScrollView, H4, Spacer } from "tamagui";
 
 import UserProfileContent from "@/components/UserProfileContent";
 import { Post, User } from "@/model/types";
@@ -14,12 +15,10 @@ export default function ProfileScreen() {
   const { user } = useStore();
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  useEffect(() => {
-    fetchUserProfile();
-  }, []);
-
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
+    if (!user) return;
     const profile = await getUserProfile(user.id);
     const stats = await getUserStats(user.id);
     const posts = await getUserPosts(user.id);
@@ -28,7 +27,17 @@ export default function ProfileScreen() {
     }
     setUserProfile(profile);
     setUserPosts(posts);
-  };
+  }, [user, getUserProfile, getUserStats, getUserPosts]);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchUserProfile();
+    setRefreshing(false);
+  }, [fetchUserProfile]);
 
   const handlePostPress = (postId: number) => {
     router.push({
@@ -39,7 +48,12 @@ export default function ProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         <H4 fontFamily="jost" color={colors.textBlack} padding="$4">
           Profile
         </H4>
@@ -51,6 +65,7 @@ export default function ProfileScreen() {
             onPostPress={handlePostPress}
           />
         )}
+        <Spacer size="$12" />
       </ScrollView>
     </SafeAreaView>
   );

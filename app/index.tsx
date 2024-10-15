@@ -1,6 +1,7 @@
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import { RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, YStack, H4, Spacer, Text } from "tamagui";
 
@@ -18,21 +19,26 @@ export default function HomeScreen() {
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const [followingUsers, setFollowingUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    const [posts, following] = await Promise.all([
+      getUserFeed(),
+      getUserFollowing(),
+    ]);
+    setFeedPosts(posts);
+    setFollowingUsers(following);
+  }, [getUserFeed, getUserFollowing]);
 
   useEffect(() => {
-    fetchFeed();
-    fetchFollowing();
-  }, []);
+    fetchData();
+  }, [fetchData]);
 
-  const fetchFeed = async () => {
-    const posts = await getUserFeed();
-    setFeedPosts(posts);
-  };
-
-  const fetchFollowing = async () => {
-    const following = await getUserFollowing();
-    setFollowingUsers(following);
-  };
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchData();
+    setRefreshing(false);
+  }, [fetchData]);
 
   const handleUserAvatarPress = (userId: number) => {
     setSelectedUserId(userId);
@@ -40,7 +46,12 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
-      <ScrollView padding="$4">
+      <ScrollView
+        padding="$4"
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         <YStack
           alignItems="center"
           {...shadows}
@@ -73,7 +84,9 @@ export default function HomeScreen() {
         <YStack gap="$4" paddingTop="$4">
           <H4 fontFamily="jost">Feed</H4>
           {feedPosts.length > 0 ? (
-            feedPosts.map((post) => <FeedPost key={post.id} post={post} />)
+            feedPosts.map((post) => (
+              <FeedPost key={post.id} post={post} onRefresh={handleRefresh} />
+            ))
           ) : (
             <Text>No posts found</Text>
           )}
@@ -84,6 +97,7 @@ export default function HomeScreen() {
         userId={selectedUserId}
         isOpen={selectedUserId !== null}
         onClose={() => setSelectedUserId(null)}
+        onRefresh={handleRefresh}
       />
     </SafeAreaView>
   );

@@ -1,27 +1,32 @@
 {
   "expo": {
-    "name": "wardrop-client",
-    "slug": "wardrop-client",
+    "name": "waredrop",
+    "slug": "waredrop",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
-    "userInterfaceStyle": "automatic",
+    "scheme": "waredrop",
+    "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.jhdev.wardrop"
+      "bundleIdentifier": "com.hgdev.waredrop",
+      "infoPlist": {
+        "LSApplicationQueriesSchemes": ["instagram-stories", "instagram"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.jhdev.wardrop"
+      "package": "com.hgdev.waredrop",
+      "queries": {
+        "packages": ["com.instagram.android"]
+      }
     },
     "web": {
       "bundler": "metro",

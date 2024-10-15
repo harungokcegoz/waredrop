@@ -12,6 +12,7 @@ import {
   unfollowUserApi,
   getUserStatsApi,
   getUserPostsApi,
+  isFollowingUserApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 
@@ -97,7 +98,7 @@ export const useUserViewModel = () => {
         console.error("Error following user:", error);
       }
     },
-    [user],
+    [user]
   );
 
   const unfollowUser = useCallback(
@@ -109,7 +110,21 @@ export const useUserViewModel = () => {
         console.error("Error unfollowing user:", error);
       }
     },
-    [user],
+    [user]
+  );
+
+  const isFollowingUser = useCallback(
+    async (followedId: number) => {
+      if (!user) return false;
+      try {
+        const response = await isFollowingUserApi(user.id, followedId);
+        return response.data;
+      } catch (error) {
+        console.error("Error checking if following user:", error);
+        return false;
+      }
+    },
+    [user]
   );
 
   const getUserBookmarks = useCallback(async () => {
@@ -162,5 +177,6 @@ export const useUserViewModel = () => {
     deleteUserAccount,
     getUserStats,
     getUserPosts,
+    isFollowingUser,
   };
 };

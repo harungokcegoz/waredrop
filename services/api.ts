@@ -131,15 +131,21 @@ export const sharePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
 // Follow
 export const followUserApi = (
   userId: number,
-  followedId: number,
+  followedId: number
 ): Promise<AxiosResponse<void>> =>
   api.post(apiEndpoints.followUser(userId), { followedId });
 
 export const unfollowUserApi = (
   userId: number,
-  followedId: number,
+  followedId: number
 ): Promise<AxiosResponse<void>> =>
   api.delete(apiEndpoints.unfollowUser(userId, followedId));
+
+export const isFollowingUserApi = (
+  userId: number,
+  followedId: number
+): Promise<AxiosResponse<boolean>> =>
+  api.get(apiEndpoints.isFollowingUser(userId, followedId));
 
 export const getUserFollowersApi = (
   userId: number,
