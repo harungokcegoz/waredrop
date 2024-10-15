@@ -7,6 +7,7 @@ const apiEndpoints = {
   getUserById: (userId: number) => `/users/${userId}`,
   updateUser: (userId: number) => `/users/${userId}`,
   deleteUser: (userId: number) => `/users/${userId}`,
+  getUserPosts: (userId: number) => `/users/${userId}/posts`,
 
   // Items
   getUserItems: (userId: number) => `/users/${userId}/items`,
@@ -31,10 +32,29 @@ const apiEndpoints = {
   // Posts
   createPost: (userId: number) => `/users/${userId}/posts`,
   getPostById: (postId: number) => `/posts/${postId}`,
-  likePost: (postId: number) => `/posts/${postId}/like`,
-  unlikePost: (postId: number) => `/posts/${postId}/unlike`,
+  likePost: (postId: number) => `/posts/${postId}/likes`,
+  unlikePost: (postId: number) => `/posts/${postId}/likes`,
   deletePost: (userId: number, postId: number) =>
     `/users/${userId}/posts/${postId}`,
+  getUserFeed: (userId: number, limit: number, offset: number) =>
+    `/users/${userId}/feed?limit=${limit}&offset=${offset}`,
+  sharePost: (postId: number) => `/posts/${postId}/shares`,
+
+  // Follow
+  followUser: (userId: number) => `/users/${userId}/follows`,
+  unfollowUser: (userId: number, followedId: number) =>
+    `/users/${userId}/follows/${followedId}`,
+  getUserFollowers: (userId: number) => `/users/${userId}/followers`,
+  getUserFollowing: (userId: number) => `/users/${userId}/following`,
+
+  // Bookmark
+  addBookmark: (userId: number) => `/users/${userId}/bookmarks`,
+  removeBookmark: (userId: number, postId: number) =>
+    `/users/${userId}/bookmarks/${postId}`,
+  getBookmarks: (userId: number) => `/users/${userId}/bookmarks`,
+
+  // User stats
+  getUserStats: (userId: number) => `/users/${userId}/stats`,
 };
 
 export default apiEndpoints;

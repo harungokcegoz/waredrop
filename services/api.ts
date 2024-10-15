@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-import { User, Item, Outfit, Post } from "../model/types";
+import { User, Item, Outfit, Post, UserStats } from "../model/types";
 
 import apiEndpoints from "./apiEndpoints";
 
@@ -19,19 +19,19 @@ export const googleLogin = (
   api.post(apiEndpoints.googleLogin(), { token });
 
 // Users
-export const getAllUsers = (): Promise<AxiosResponse<User[]>> =>
+export const getAllUsersApi = (): Promise<AxiosResponse<User[]>> =>
   api.get(apiEndpoints.getAllUsers());
 
-export const getUserById = (userId: number): Promise<AxiosResponse<User>> =>
+export const getUserByIdApi = (userId: number): Promise<AxiosResponse<User>> =>
   api.get(apiEndpoints.getUserById(userId));
 
-export const updateUser = (
+export const updateUserApi = (
   userId: number,
   userData: Partial<User>,
 ): Promise<AxiosResponse<User>> =>
   api.put(apiEndpoints.updateUser(userId), userData);
 
-export const deleteUser = (userId: number): Promise<AxiosResponse<User>> =>
+export const deleteUserApi = (userId: number): Promise<AxiosResponse<User>> =>
   api.delete(apiEndpoints.deleteUser(userId));
 
 // Items
@@ -97,25 +97,86 @@ export const deleteOutfit = (
   api.delete(apiEndpoints.deleteOutfit(userId, outfitId));
 
 // Posts
-export const createPost = (
+export const createPostApi = (
   userId: number,
   postData: Omit<Post, "id" | "user_id">,
 ): Promise<AxiosResponse<Post>> =>
   api.post(apiEndpoints.createPost(userId), postData);
 
-export const getPostById = (postId: number): Promise<AxiosResponse<Post>> =>
+export const getPostByIdApi = (postId: number): Promise<AxiosResponse<Post>> =>
   api.get(apiEndpoints.getPostById(postId));
 
-export const likePost = (postId: number): Promise<AxiosResponse<Post>> =>
+export const likePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
   api.post(apiEndpoints.likePost(postId));
 
-export const unlikePost = (postId: number): Promise<AxiosResponse<Post>> =>
+export const unlikePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
   api.post(apiEndpoints.unlikePost(postId));
 
-export const deletePost = (
+export const deletePostApi = (
   userId: number,
   postId: number,
 ): Promise<AxiosResponse<Post>> =>
   api.delete(apiEndpoints.deletePost(userId, postId));
+
+export const getUserFeedApi = (
+  userId: number,
+  limit: number,
+  offset: number,
+): Promise<AxiosResponse<Post[]>> =>
+  api.get(apiEndpoints.getUserFeed(userId, limit, offset));
+
+export const sharePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
+  api.post(apiEndpoints.sharePost(postId));
+
+// Follow
+export const followUserApi = (
+  userId: number,
+  followedId: number,
+): Promise<AxiosResponse<void>> =>
+  api.post(apiEndpoints.followUser(userId), { followedId });
+
+export const unfollowUserApi = (
+  userId: number,
+  followedId: number,
+): Promise<AxiosResponse<void>> =>
+  api.delete(apiEndpoints.unfollowUser(userId, followedId));
+
+export const getUserFollowersApi = (
+  userId: number,
+): Promise<AxiosResponse<User[]>> =>
+  api.get(apiEndpoints.getUserFollowers(userId));
+
+export const getUserFollowingApi = (
+  userId: number,
+): Promise<AxiosResponse<User[]>> =>
+  api.get(apiEndpoints.getUserFollowing(userId));
+
+// Bookmark
+export const addBookmarkApi = (
+  userId: number,
+  postId: number,
+): Promise<AxiosResponse<void>> =>
+  api.post(apiEndpoints.addBookmark(userId), { postId });
+
+export const removeBookmarkApi = (
+  userId: number,
+  postId: number,
+): Promise<AxiosResponse<void>> =>
+  api.delete(apiEndpoints.removeBookmark(userId, postId));
+
+export const getBookmarksApi = (
+  userId: number,
+): Promise<AxiosResponse<number[]>> =>
+  api.get(apiEndpoints.getBookmarks(userId));
+
+// User Stats
+export const getUserStatsApi = (
+  userId: number,
+): Promise<AxiosResponse<UserStats>> =>
+  api.get(apiEndpoints.getUserStats(userId));
+
+export const getUserPostsApi = (
+  userId: number,
+): Promise<AxiosResponse<Post[]>> => api.get(apiEndpoints.getUserPosts(userId));
 
 export default api;

@@ -9,18 +9,45 @@ import { Outfit, Item } from "@/model/types";
 
 interface OutfitCardProps {
   outfit: Outfit;
-  selectedTags: string[];
+  selectedTags?: string[];
+  size?: "small" | "large";
 }
 
-const OutfitCard: React.FC<OutfitCardProps> = ({ outfit, selectedTags }) => {
+const OutfitCard: React.FC<OutfitCardProps> = ({
+  outfit,
+  selectedTags,
+  size = "small",
+}) => {
   const router = useRouter();
 
   const renderClothingItem = (item: Item, position: string) => {
     const positionStyles: Record<string, object> = {
-      tshirts: { top: 0, left: 25, width: 100, height: 80 },
-      jackets: { bottom: 40, left: 25, width: 100, height: 80 },
-      shoes: { bottom: 0, left: 50, width: 50, height: 40 },
-      watches: { top: 10, right: 10, width: 40, height: 40 },
+      tshirts: {
+        top: 0,
+        left: size === "small" ? 25 : 90,
+        width: size === "small" ? 75 : 120,
+      },
+      jackets: {
+        top: 30,
+        left: 0,
+        width: size === "small" ? 75 : 120,
+      },
+      shoes: {
+        bottom: 0,
+        left: size === "small" ? 50 : 200,
+        width: size === "small" ? 75 : 100,
+      },
+      watches: {
+        top: 70,
+        right: 10,
+        width: size === "small" ? 70 : 120,
+      },
+      bottoms: {
+        bottom: size === "small" ? 30 : 20,
+        left: size === "small" ? 50 : 80,
+        width: size === "small" ? 70 : 150,
+        zIndex: 1,
+      },
     };
 
     return (
@@ -30,6 +57,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({ outfit, selectedTags }) => {
         style={{
           position: "absolute",
           ...positionStyles[position],
+          aspectRatio: 1,
         }}
         contentFit="contain"
         cachePolicy="disk"
@@ -72,11 +100,11 @@ const OutfitCard: React.FC<OutfitCardProps> = ({ outfit, selectedTags }) => {
       backgroundColor="white"
       borderRadius="$4"
       overflow="hidden"
-      borderWidth={1}
+      borderWidth={size === "small" ? 1 : 0}
       borderColor={colors.border}
       {...pressAnimationStyle}
-      width={150}
-      height={220}
+      width={size === "small" ? 150 : "100%"}
+      height={size === "small" ? 250 : 350}
       padding="$2"
     >
       <Text fontFamily="jost" fontSize="$2" margin="$1">
@@ -93,7 +121,9 @@ const OutfitCard: React.FC<OutfitCardProps> = ({ outfit, selectedTags }) => {
             <Text
               key={tag}
               color={
-                selectedTags.includes(tag) ? colors.secondary : colors.textBlack
+                selectedTags?.includes(tag)
+                  ? colors.secondary
+                  : colors.textBlack
               }
               fontFamily="jost"
               fontSize="$1"

@@ -102,6 +102,7 @@ export default function OutfitsScreen() {
                 key={outfit.id}
                 outfit={outfit}
                 selectedTags={selectedTags}
+                size="small"
               />
             ))}
           </XStack>
