@@ -13,6 +13,8 @@ import {
   Circle,
   Label,
   ScrollView,
+  Button,
+  Popover,
 } from "tamagui";
 
 import { colors } from "../styles/preset-styles";
@@ -56,6 +58,7 @@ export default function ClothesItemForm({
   const [commercial_link, setcommercial_link] = useState(
     initialValues?.commercial_link || "",
   );
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   const resetForm = () => {
     setImage(null);
@@ -66,15 +69,30 @@ export default function ClothesItemForm({
     setcommercial_link("");
   };
 
-  const pickImage = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      quality: 1,
-    });
+  const pickImage = async (sourceType: "gallery" | "camera") => {
+    setPopoverOpen(false);
+    let result;
+
+    if (sourceType === "gallery") {
+      result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        quality: 1,
+      });
+    } else {
+      const { status } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera permissions to make this work!");
+        return;
+      }
+
+      result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+    }
 
     if (!result.canceled && result.assets[0].uri) {
-      // Always read the file and convert it to base64
       const base64 = await FileSystem.readAsStringAsync(result.assets[0].uri, {
         encoding: FileSystem.EncodingType.Base64,
       });
@@ -131,28 +149,70 @@ export default function ClothesItemForm({
               <Ionicons name={icon} size={20} color="white" />
             </Circle>
           </XStack>
-          <View onPress={pickImage} alignItems="center" justifyContent="center">
-            {image ? (
-              <Image
-                source={{ uri: image }}
-                style={{ width: 300, height: 300 }}
-                contentFit="contain"
-                cachePolicy="memory"
-              />
-            ) : (
-              <View
-                width={300}
-                height={300}
-                borderWidth={2}
-                borderStyle="dashed"
-                borderColor="$gray8"
-                justifyContent="center"
-                alignItems="center"
-              >
-                <Text>Tap to add photo</Text>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <Popover.Trigger asChild>
+              <View alignItems="center" justifyContent="center">
+                {image ? (
+                  <Image
+                    source={{ uri: image }}
+                    style={{ width: 300, height: 300 }}
+                    contentFit="contain"
+                    cachePolicy="memory"
+                  />
+                ) : (
+                  <View
+                    width={300}
+                    height={300}
+                    borderWidth={2}
+                    borderStyle="dashed"
+                    borderColor="$gray8"
+                    justifyContent="center"
+                    alignItems="center"
+                  >
+                    <Text>Tap to add photo</Text>
+                  </View>
+                )}
               </View>
-            )}
-          </View>
+            </Popover.Trigger>
+            <Popover.Content
+              borderWidth={1}
+              borderColor={colors.border}
+              enterStyle={{ y: -10, opacity: 0 }}
+              exitStyle={{ y: -10, opacity: 0 }}
+              elevate
+              animation={[
+                "quick",
+                {
+                  opacity: {
+                    overshootClamping: true,
+                  },
+                },
+              ]}
+            >
+              <Popover.Arrow
+                size={10}
+                borderWidth={1}
+                borderColor={colors.border}
+              />
+              <YStack gap="$3" padding="$3">
+                <Button
+                  onPress={() => pickImage("gallery")}
+                  backgroundColor={colors.primary}
+                >
+                  <Ionicons name="images" size={20} color="white" />
+                  <Text color="white"> Gallery</Text>
+                </Button>
+                <Button
+                  onPress={() => pickImage("camera")}
+                  backgroundColor={colors.primary}
+                >
+                  <Ionicons name="camera" size={20} color="white" />
+                  <Text color="white"> Camera</Text>
+                </Button>
+              </YStack>
+            </Popover.Content>
+          </Popover>
+
           <YStack>
             <YStack>
               <Label fontWeight="bold">Name</Label>

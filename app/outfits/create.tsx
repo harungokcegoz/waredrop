@@ -33,7 +33,7 @@ export default function CreateOutfit() {
   const handleCreate = async (outfitName: string) => {
     await addOutfit({
       name: outfitName,
-      itemIds: selectedItems.map(item => item.id),
+      itemIds: selectedItems.map((item) => item.id),
       tags: tags.split(",").map((tag) => tag.trim()),
     });
     router.back();
