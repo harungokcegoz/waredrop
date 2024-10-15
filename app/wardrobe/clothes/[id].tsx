@@ -16,6 +16,7 @@ import {
   Spinner,
 } from "tamagui";
 
+import { useStore } from "../../../stores/useStore";
 import { colors } from "../../../styles/preset-styles";
 import { useItemViewModel } from "../../../viewmodels/ItemViewModel";
 
@@ -23,7 +24,8 @@ import { Item } from "@/model/types";
 
 export default function ClothesItemDetail() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const { user } = useStore();
+  const { id, userId } = useLocalSearchParams();
   const { getItemById, deleteItemById } = useItemViewModel();
   const [item, setItem] = useState<Item | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +40,7 @@ export default function ClothesItemDetail() {
       }
 
       try {
-        const fetchedItem = await getItemById(Number(id));
+        const fetchedItem = await getItemById(Number(id), Number(userId));
         if (fetchedItem) {
           setItem(fetchedItem);
         } else {
@@ -105,23 +107,25 @@ export default function ClothesItemDetail() {
             <View onPress={() => router.back()}>
               <Ionicons name="arrow-back" size={24} color="black" />
             </View>
-            <XStack gap="$4">
-              <View
-                onPress={() =>
-                  router.push({
-                    pathname: "/wardrobe/clothes/edit-clothes/[itemId]",
-                    params: { itemId: item.id },
-                  })
-                }
-                marginRight="$2"
-                backgroundColor="white"
-              >
-                <Ionicons name="create-outline" size={24} color="black" />
-              </View>
-              <View onPress={handleDelete}>
-                <Ionicons name="trash-outline" size={24} color="red" />
-              </View>
-            </XStack>
+            {user?.id === item.user_id && (
+              <XStack gap="$4">
+                <View
+                  onPress={() =>
+                    router.push({
+                      pathname: "/wardrobe/clothes/edit-clothes/[itemId]",
+                      params: { itemId: item.id },
+                    })
+                  }
+                  marginRight="$2"
+                  backgroundColor="white"
+                >
+                  <Ionicons name="create-outline" size={24} color="black" />
+                </View>
+                <View onPress={handleDelete}>
+                  <Ionicons name="trash-outline" size={24} color="red" />
+                </View>
+              </XStack>
+            )}
           </XStack>
           <YStack alignItems="center" width="100%">
             <Image

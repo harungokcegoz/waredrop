@@ -11,12 +11,14 @@ interface OutfitCardProps {
   outfit: Outfit;
   selectedTags?: string[];
   size?: "small" | "large";
+  userId?: number;
 }
 
 const OutfitCard: React.FC<OutfitCardProps> = ({
   outfit,
   selectedTags,
   size = "small",
+  userId,
 }) => {
   const router = useRouter();
 
@@ -60,7 +62,7 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
           aspectRatio: 1,
         }}
         contentFit="contain"
-        cachePolicy="disk"
+        cachePolicy="memory"
       />
     );
   };
@@ -95,7 +97,10 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   return (
     <Card
       onPress={() =>
-        router.push({ pathname: "/outfits/[id]", params: { id: outfit.id } })
+        router.push({
+          pathname: "/outfits/[id]",
+          params: { id: outfit.id, userId: outfit.user_id },
+        })
       }
       backgroundColor="white"
       borderRadius="$4"

@@ -95,9 +95,9 @@ export const useItemViewModel = () => {
   );
 
   const getItemById = useCallback(
-    async (itemId: number) => {
+    async (itemId: number, userId: number) => {
       if (user) {
-        const response = await getItemByIdApi(user.id, itemId);
+        const response = await getItemByIdApi(userId, itemId);
         return response.data;
       }
     },

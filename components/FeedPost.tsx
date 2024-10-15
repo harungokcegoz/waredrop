@@ -56,16 +56,18 @@ export default function FeedPost({ post, type = "feed" }: FeedPostProps) {
       <XStack alignItems="center" gap="$2">
         <Image
           source={{
-            uri: "https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg",
+            uri: post.user.profile_picture_url,
           }}
           style={{ width: 40, height: 40, borderRadius: 20 }}
+          cachePolicy="memory"
+          contentFit="cover"
         />
         <Text fontWeight="bold" fontFamily="jost">
           {post.user.name}
         </Text>
       </XStack>
 
-      <OutfitCard outfit={post.outfit} size="large" />
+      <OutfitCard outfit={post.outfit} size="large" userId={post.user_id} />
 
       <XStack justifyContent="space-between" marginTop="$2" padding="$2">
         <XStack gap="$4" alignItems="center" justifyContent="center">

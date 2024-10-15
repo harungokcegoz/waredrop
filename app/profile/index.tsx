@@ -16,9 +16,8 @@ import {
 import { colors, pressAnimationStyle } from "../../styles/preset-styles";
 import { useUserViewModel } from "../../viewmodels/UserViewModel";
 
-import OutfitCard from "@/components/OutfitCard";
-import { Post, User } from "@/model/types";
 import FeedPost from "@/components/FeedPost";
+import { Post, User } from "@/model/types";
 
 export default function ProfileScreen() {
   const { getUserProfile, getUserStats, getUserPosts } = useUserViewModel();
@@ -137,6 +136,7 @@ export default function ProfileScreen() {
                 {userPosts.length > 0 ? (
                   userPosts.map((post) => (
                     <View
+                      key={post.id}
                       onPress={() => {
                         router.push({
                           pathname: "/outfits/[id]",

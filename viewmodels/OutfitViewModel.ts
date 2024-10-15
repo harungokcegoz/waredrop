@@ -90,10 +90,10 @@ export const useOutfitViewModel = () => {
   );
 
   const getOutfitById = useCallback(
-    async (outfitId: number) => {
+    async (outfitId: number, userId: number) => {
       if (!user) return null;
       try {
-        const response = await getOutfitByIdApi(user.id, outfitId);
+        const response = await getOutfitByIdApi(userId, outfitId);
         return response.data;
       } catch (error) {
         console.error("Error fetching outfit:", error);

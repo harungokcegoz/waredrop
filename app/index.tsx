@@ -44,7 +44,7 @@ export default function HomeScreen() {
             source={require("@/assets/images/header-logo.png")}
             style={{ width: "60%", height: 50 }}
             contentFit="cover"
-            cachePolicy="disk"
+            cachePolicy="memory"
           />
         </YStack>
         {followingUsers.length > 0 && (

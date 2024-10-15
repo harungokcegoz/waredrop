@@ -14,7 +14,7 @@ export default function UserAvatar({ user }: UserAvatarProps) {
       <View width={64} height={64} borderRadius="$8" overflow="hidden">
         <Image
           source={{
-            uri: "https://www.strasys.uk/wp-content/uploads/2022/02/Depositphotos_484354208_S.jpg",
+            uri: user.profile_picture_url,
           }}
           style={{ width: "100%", height: "100%" }}
           contentFit="cover"

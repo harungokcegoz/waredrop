@@ -13,16 +13,19 @@ import {
   View,
   Spacer,
   H4,
+  H5,
 } from "tamagui";
 
 import { colors } from "../../styles/preset-styles";
 import { useOutfitViewModel } from "../../viewmodels/OutfitViewModel";
 
 import { Outfit } from "@/model/types";
+import { useStore } from "@/stores/useStore";
 
 export default function OutfitDetail() {
   const router = useRouter();
-  const { id } = useLocalSearchParams();
+  const { user } = useStore();
+  const { id, userId } = useLocalSearchParams();
   const { getOutfitById, deleteOutfitById } = useOutfitViewModel();
   const [outfit, setOutfit] = useState<Outfit | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +33,7 @@ export default function OutfitDetail() {
   useEffect(() => {
     const fetchOutfit = async () => {
       if (id) {
-        const fetchedOutfit = await getOutfitById(Number(id));
+        const fetchedOutfit = await getOutfitById(Number(id), Number(userId));
         setOutfit(fetchedOutfit);
         setIsLoading(false);
       }
@@ -93,16 +96,20 @@ export default function OutfitDetail() {
               </Text>
             ))}
           </XStack>
-          <XStack gap="$4">
-            <TouchableOpacity
-              onPress={() => router.push(`/outfits/edit/${outfit.id}`)}
-            >
-              <Ionicons name="create-outline" size={24} color="black" />
-            </TouchableOpacity>
-            <TouchableOpacity onPress={handleDelete}>
-              <Ionicons name="trash-outline" size={24} color="red" />
-            </TouchableOpacity>
-          </XStack>
+          {user?.id === outfit.user_id ? (
+            <XStack gap="$4">
+              <TouchableOpacity
+                onPress={() => router.push(`/outfits/edit/${outfit.id}`)}
+              >
+                <Ionicons name="create-outline" size={24} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity onPress={handleDelete}>
+                <Ionicons name="trash-outline" size={24} color="red" />
+              </TouchableOpacity>
+            </XStack>
+          ) : (
+            <XStack gap="$4" />
+          )}
         </XStack>
         <YStack gap="$4" padding="$4">
           <H4 fontFamily="jost" color={colors.textBlack}>
@@ -114,7 +121,7 @@ export default function OutfitDetail() {
               onPress={() =>
                 router.push({
                   pathname: "/wardrobe/clothes/[id]",
-                  params: { id: item.id },
+                  params: { id: item.id, userId: outfit.user_id },
                 })
               }
               height={200}
@@ -123,14 +130,14 @@ export default function OutfitDetail() {
               <XStack gap="$4" alignItems="center">
                 <Image
                   contentFit="contain"
-                  cachePolicy="disk"
+                  cachePolicy="memory"
                   source={{ uri: item.image_url }}
                   style={{ width: 150, height: 180 }}
                 />
                 <YStack>
-                  <H4 fontFamily="jost" color={colors.textBlack}>
+                  <H5 fontFamily="jost" color={colors.textBlack}>
                     {item.brand}
-                  </H4>
+                  </H5>
                   <Text fontFamily="jost" color={colors.textGray}>
                     {item.category}
                   </Text>
