@@ -6,6 +6,7 @@ import { ScrollView, YStack, H4, Spacer, Text } from "tamagui";
 
 import FeedPost from "@/components/FeedPost";
 import UserAvatar from "@/components/UserAvatar";
+import UserProfileSheet from "@/components/UserProfileSheet";
 import { Post, User } from "@/model/types";
 import { colors, shadows } from "@/styles/preset-styles";
 import { usePostViewModel } from "@/viewmodels/PostViewModel";
@@ -16,6 +17,7 @@ export default function HomeScreen() {
   const { getUserFollowing } = useUserViewModel();
   const [feedPosts, setFeedPosts] = useState<Post[]>([]);
   const [followingUsers, setFollowingUsers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
 
   useEffect(() => {
     fetchFeed();
@@ -30,6 +32,10 @@ export default function HomeScreen() {
   const fetchFollowing = async () => {
     const following = await getUserFollowing();
     setFollowingUsers(following);
+  };
+
+  const handleUserAvatarPress = (userId: number) => {
+    setSelectedUserId(userId);
   };
 
   return (
@@ -52,7 +58,12 @@ export default function HomeScreen() {
             <H4 fontFamily="jost">Following</H4>
             <FlashList
               data={followingUsers}
-              renderItem={({ item }) => <UserAvatar user={item} />}
+              renderItem={({ item }) => (
+                <UserAvatar
+                  user={item}
+                  onPress={() => handleUserAvatarPress(item.id)}
+                />
+              )}
               estimatedItemSize={80}
               horizontal
               showsHorizontalScrollIndicator={false}
@@ -69,6 +80,11 @@ export default function HomeScreen() {
         </YStack>
         <Spacer size="$12" />
       </ScrollView>
+      <UserProfileSheet
+        userId={selectedUserId}
+        isOpen={selectedUserId !== null}
+        onClose={() => setSelectedUserId(null)}
+      />
     </SafeAreaView>
   );
 }

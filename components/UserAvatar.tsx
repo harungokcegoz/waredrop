@@ -6,23 +6,26 @@ import { User } from "@/model/types";
 
 interface UserAvatarProps {
   user: User;
+  onPress?: () => void;
 }
 
-export default function UserAvatar({ user }: UserAvatarProps) {
+export default function UserAvatar({ user, onPress }: UserAvatarProps) {
   return (
-    <YStack alignItems="center" width={80} marginHorizontal="$2">
-      <View width={64} height={64} borderRadius="$8" overflow="hidden">
-        <Image
-          source={{
-            uri: user.profile_picture_url,
-          }}
-          style={{ width: "100%", height: "100%" }}
-          contentFit="cover"
-        />
-      </View>
-      <Text fontSize="$2" fontFamily="jost" marginTop="$1" numberOfLines={1}>
-        {user.name}
-      </Text>
-    </YStack>
+    <View onPress={onPress}>
+      <YStack alignItems="center" width={80} marginHorizontal="$2">
+        <View width={64} height={64} borderRadius="$8" overflow="hidden">
+          <Image
+            source={{
+              uri: user.profile_picture_url,
+            }}
+            style={{ width: "100%", height: "100%" }}
+            contentFit="cover"
+          />
+        </View>
+        <Text fontSize="$2" fontFamily="jost" marginTop="$1" numberOfLines={1}>
+          {user.name}
+        </Text>
+      </YStack>
+    </View>
   );
 }

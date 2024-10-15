@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 
-import { User, UserStats } from "../model/types";
+import { User } from "../model/types";
 import {
   getUserByIdApi,
   updateUserApi,
@@ -18,16 +18,18 @@ import { useStore } from "../stores/useStore";
 export const useUserViewModel = () => {
   const { user, setUser } = useStore();
 
-  const getUserProfile = useCallback(async () => {
-    if (!user) return null;
-    try {
-      const response = await getUserByIdApi(user.id);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-      return null;
-    }
-  }, [user]);
+  const getUserProfile = useCallback(
+    async (userId: number) => {
+      try {
+        const response = await getUserByIdApi(userId);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        return null;
+      }
+    },
+    [user],
+  );
 
   const getUserFollowers = useCallback(async () => {
     if (!user) return [];
@@ -121,27 +123,31 @@ export const useUserViewModel = () => {
     }
   }, [user]);
 
-  const getUserStats = useCallback(async () => {
-    if (!user) return null;
-    try {
-      const response = await getUserStatsApi(user.id);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user stats:", error);
-      return null;
-    }
-  }, [user]);
+  const getUserStats = useCallback(
+    async (userId: number) => {
+      try {
+        const response = await getUserStatsApi(userId);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching user stats:", error);
+        return null;
+      }
+    },
+    [user],
+  );
 
-  const getUserPosts = useCallback(async () => {
-    if (!user) return [];
-    try {
-      const response = await getUserPostsApi(user.id);
-      return response.data;
-    } catch (error) {
-      console.error("Error fetching user posts:", error);
-      return [];
-    }
-  }, [user]);
+  const getUserPosts = useCallback(
+    async (userId: number) => {
+      try {
+        const response = await getUserPostsApi(userId);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching user posts:", error);
+        return [];
+      }
+    },
+    [user],
+  );
 
   return {
     user,
