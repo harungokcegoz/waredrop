@@ -9,7 +9,7 @@ import { colors, pressAnimationStyle } from "@/styles/preset-styles";
 
 interface ClothesItemStackProps {
   items: Item[];
-  onItemPress: (item: Item) => void;
+  onItemPress: (itemId: number) => void;
   selectedItems?: Item[];
   horizontal?: boolean;
 }
@@ -35,7 +35,7 @@ const ClothesItemStack: React.FC<ClothesItemStackProps> = ({
           width={150}
           height={200}
           {...pressAnimationStyle}
-          onPress={() => onItemPress(item)}
+          onPress={() => onItemPress(item.id)}
           borderWidth={isSelected ? 3 : 0}
           borderColor={isSelected ? colors.primary : "transparent"}
           borderRadius="$8"

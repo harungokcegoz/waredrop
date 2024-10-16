@@ -2,9 +2,9 @@ import { Image } from "expo-image";
 import React from "react";
 import { Text, XStack, YStack, H4, Card, View } from "tamagui";
 
-import { colors } from "@/styles/preset-styles";
-import { User, Post } from "@/model/types";
 import FeedPost from "@/components/FeedPost";
+import { User, Post } from "@/model/types";
+import { colors } from "@/styles/preset-styles";
 
 interface UserProfileContentProps {
   user: User;
@@ -21,12 +21,7 @@ export default function UserProfileContent({
 }: UserProfileContentProps) {
   return (
     <YStack padding="$4" gap="$4">
-      <YStack
-        alignItems="center"
-        justifyContent="center"
-        gap="$4"
-        padding="$6"
-      >
+      <YStack alignItems="center" justifyContent="center" gap="$4" padding="$6">
         <Image
           source={{ uri: user.profile_picture_url }}
           style={{ width: 150, height: 150, borderRadius: 10 }}
@@ -36,7 +31,7 @@ export default function UserProfileContent({
         <Text fontFamily="jost" fontSize="$5" fontWeight="bold">
           {user.name}
         </Text>
-        <XStack justifyContent="center" gap="$4">
+        <XStack justifyContent="center" gap="$4" marginStart="$4">
           <YStack alignItems="center" gap="$1">
             <Text fontWeight="bold" fontSize="$5" fontFamily="jost">
               {user.userStats.followersCount}
@@ -94,10 +89,7 @@ export default function UserProfileContent({
               label="Total Views"
               value={user.userStats.totalViews || 0}
             />
-            <StatItem
-              label="Total Shares"
-              value={user.userStats.totalShares}
-            />
+            <StatItem label="Total Shares" value={user.userStats.totalShares} />
           </XStack>
         </Card>
       )}

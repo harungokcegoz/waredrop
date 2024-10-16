@@ -96,7 +96,7 @@ export default function ClothesItemDetail() {
   }
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: colors.background }}>
       <YStack flex={1}>
         <ScrollView>
           <XStack

@@ -1,7 +1,8 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import React, { useEffect } from "react";
-import { ScrollView } from "react-native";
+import { useRouter } from "expo-router";
+import React, { useCallback, useEffect, useState } from "react";
+import { RefreshControl, ScrollView } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Circle, Spacer, XStack } from "tamagui";
 
@@ -9,18 +10,43 @@ import ClothesItemStack from "../../components/ClothesItemStack";
 import { colors } from "../../styles/preset-styles";
 import { useItemViewModel } from "../../viewmodels/ItemViewModel";
 
+import { useStore } from "@/stores/useStore";
+
 export default function WardrobeScreen() {
   const { wardrobe, fetchItems } = useItemViewModel();
+  const [refreshing, setRefreshing] = useState(false);
+  const router = useRouter();
+  const { user } = useStore();
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [fetchItems]);
+
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await fetchItems();
+    setRefreshing(false);
+  }, [fetchItems]);
+
+  const handleItemPress = useCallback(
+    (itemId: number) => {
+      router.push({
+        pathname: "/wardrobe/clothes/[id]",
+        params: { id: itemId, userId: user?.id },
+      });
+    },
+    [router, user],
+  );
 
   const categories = [...new Set(wardrobe.map((item) => item.category))];
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
+        }
+      >
         <XStack padding="$4" justifyContent="space-between" alignItems="center">
           <Text fontSize="$6" fontWeight="bold">
             Wardrobe
@@ -37,6 +63,7 @@ export default function WardrobeScreen() {
               {category}
             </Text>
             <ClothesItemStack
+              onItemPress={handleItemPress}
               items={wardrobe.filter((item) => item.category === category)}
             />
           </View>

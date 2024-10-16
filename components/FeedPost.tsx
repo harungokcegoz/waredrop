@@ -11,7 +11,7 @@ import OutfitCard from "./OutfitCard";
 import SharePopover from "./SharePopover";
 
 import { Post } from "@/model/types";
-import { colors } from "@/styles/preset-styles";
+import { colors, shadows } from "@/styles/preset-styles";
 
 interface FeedPostProps {
   post: Post;
@@ -63,6 +63,7 @@ export default function FeedPost({
         padding: 10,
         borderRadius: 10,
       }}
+      {...shadows}
     >
       <YStack
         borderWidth={1}
