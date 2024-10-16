@@ -4,8 +4,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 
 import { Item, Outfit, User } from "../model/types";
 
-import { initialMockUser } from "@/constants/constants";
-
 interface AppState {
   user: User | null;
   setUser: (user: User | null) => void;
@@ -24,7 +22,7 @@ interface AppState {
 export const useStore = create(
   persist<AppState>(
     (set) => ({
-      user: initialMockUser,
+      user: null,
       wardrobe: [],
       outfits: [],
       setUser: (user: User | null) => set({ user }),

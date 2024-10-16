@@ -53,7 +53,7 @@ export default function AppNavigation() {
                 <Ionicons name="add-circle" size={50} color={colors.primary} />
               </View>
             );
-          }
+          } else if (route.name === "login") return null;
           return <View {...props} />;
         },
       })}

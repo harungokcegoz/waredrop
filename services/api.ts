@@ -15,13 +15,11 @@ export const setAuthToken = (token: string) => {
 // Auth
 export const googleLogin = (
   token: string,
-): Promise<AxiosResponse<{ access_token: string; token_type: string }>> =>
-  api.post(apiEndpoints.googleLogin(), { token });
+): Promise<
+  AxiosResponse<{ access_token: string; token_type: string; user: User }>
+> => api.post(apiEndpoints.googleLogin(), { token });
 
 // Users
-export const getAllUsersApi = (): Promise<AxiosResponse<User[]>> =>
-  api.get(apiEndpoints.getAllUsers());
-
 export const getUserByIdApi = (userId: number): Promise<AxiosResponse<User>> =>
   api.get(apiEndpoints.getUserById(userId));
 
@@ -131,19 +129,19 @@ export const sharePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
 // Follow
 export const followUserApi = (
   userId: number,
-  followedId: number
+  followedId: number,
 ): Promise<AxiosResponse<void>> =>
   api.post(apiEndpoints.followUser(userId), { followedId });
 
 export const unfollowUserApi = (
   userId: number,
-  followedId: number
+  followedId: number,
 ): Promise<AxiosResponse<void>> =>
   api.delete(apiEndpoints.unfollowUser(userId, followedId));
 
 export const isFollowingUserApi = (
   userId: number,
-  followedId: number
+  followedId: number,
 ): Promise<AxiosResponse<boolean>> =>
   api.get(apiEndpoints.isFollowingUser(userId, followedId));
 

@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-
 import { User } from "../model/types";
 import {
   getUserByIdApi,
@@ -98,7 +97,7 @@ export const useUserViewModel = () => {
         console.error("Error following user:", error);
       }
     },
-    [user]
+    [user],
   );
 
   const unfollowUser = useCallback(
@@ -110,7 +109,7 @@ export const useUserViewModel = () => {
         console.error("Error unfollowing user:", error);
       }
     },
-    [user]
+    [user],
   );
 
   const isFollowingUser = useCallback(
@@ -124,7 +123,7 @@ export const useUserViewModel = () => {
         return false;
       }
     },
-    [user]
+    [user],
   );
 
   const getUserBookmarks = useCallback(async () => {

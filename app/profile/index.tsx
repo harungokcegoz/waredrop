@@ -53,7 +53,7 @@ export default function ProfileScreen() {
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
         }
-      >
+      > 
         <H4 fontFamily="jost" color={colors.textBlack} padding="$4">
           Profile
         </H4>
