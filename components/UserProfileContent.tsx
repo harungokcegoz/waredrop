@@ -85,10 +85,6 @@ export default function UserProfileContent({
               label="Total Bookmarks"
               value={user.userStats.totalBookmarks}
             />
-            <StatItem
-              label="Total Views"
-              value={user.userStats.totalViews || 0}
-            />
             <StatItem label="Total Shares" value={user.userStats.totalShares} />
           </XStack>
         </Card>

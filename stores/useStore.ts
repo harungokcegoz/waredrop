@@ -6,13 +6,15 @@ import { Item, Outfit, User } from "../model/types";
 
 interface AppState {
   user: User | null;
-  setUser: (user: User | null) => void;
   wardrobe: Item[];
+  outfits: Outfit[];
+  token: string | null;
+  setUser: (user: User | null) => void;
+  setToken: (token: string | null) => void;
   setWardrobe: (items: Item[]) => void;
   addWardrobeItem: (item: Item) => void;
   updateWardrobeItem: (item: Item) => void;
   deleteWardrobeItem: (itemId: number) => void;
-  outfits: Outfit[];
   setOutfits: (outfits: Outfit[]) => void;
   addOutfit: (outfit: Outfit) => void;
   updateOutfitById: (outfitId: number, outfitData: Partial<Outfit>) => void;
@@ -25,7 +27,9 @@ export const useStore = create(
       user: null,
       wardrobe: [],
       outfits: [],
+      token: null,
       setUser: (user: User | null) => set({ user }),
+      setToken: (token: string | null) => set({ token }),
       setWardrobe: (items: Item[]) => set({ wardrobe: items }),
       addWardrobeItem: (item: Item) =>
         set((state) => ({ wardrobe: [...state.wardrobe, item] })),

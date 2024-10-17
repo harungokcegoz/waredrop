@@ -4,11 +4,11 @@ import {
 } from "@react-native-google-signin/google-signin";
 import { useCallback } from "react";
 
-import { googleLogin, setAuthToken } from "../services/api";
+import { googleLogin } from "../services/api";
 import { useStore } from "../stores/useStore";
 
 export const useAuthViewModel = () => {
-  const { setUser } = useStore();
+  const { setUser, setToken } = useStore();
 
   const initializeGoogleSignIn = useCallback(async () => {
     try {
@@ -31,14 +31,13 @@ export const useAuthViewModel = () => {
       }
 
       const response = await googleLogin(idToken);
-      const { access_token, user: loggedInUser } = response.data;
-
-      setAuthToken(access_token);
+      const { token, user: loggedInUser } = response.data;
+      setToken(token);
       setUser(loggedInUser);
 
       console.log("Successfully signed in");
       return loggedInUser;
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === statusCodes.SIGN_IN_CANCELLED) {
         console.log("Google Sign-In cancelled");
       } else if (error.code === statusCodes.IN_PROGRESS) {
@@ -56,7 +55,7 @@ export const useAuthViewModel = () => {
     try {
       await GoogleSignin.signOut();
       setUser(null);
-      setAuthToken("");
+      setToken(null);
       console.log("Successfully signed out");
     } catch (error) {
       console.error("Error signing out:", error);

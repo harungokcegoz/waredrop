@@ -48,7 +48,7 @@ export default function EditOutfit() {
     if (outfit) {
       await updateOutfitById(outfit.id, {
         name: outfitName,
-        itemIds: selectedItems.map(item => item.id),
+        itemIds: selectedItems.map((item) => item.id),
         tags: tags.split(",").map((tag) => tag.trim()),
       });
       router.back();

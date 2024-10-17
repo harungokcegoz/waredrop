@@ -54,6 +54,8 @@ export default function AppNavigation() {
               </View>
             );
           } else if (route.name === "login") return null;
+          else if (route.name === "settings") return null;
+          else if (route.name === "bookmarks") return null;
           return <View {...props} />;
         },
       })}

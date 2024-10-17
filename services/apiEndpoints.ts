@@ -42,8 +42,8 @@ const apiEndpoints = {
 
   // Follow
   followUser: (userId: number) => `/users/${userId}/follows`,
-  unfollowUser: (userId: number, followedId: number) => `/users/${userId}/follows/${followedId}`,
-  isFollowingUser: (userId: number, followedId: number) => `/users/${userId}/follows/${followedId}`,
+  unfollowUser: (userId: number, followedId: number) =>
+    `/users/${userId}/follows/${followedId}`,
   getUserFollowers: (userId: number) => `/users/${userId}/followers`,
   getUserFollowing: (userId: number) => `/users/${userId}/following`,
 

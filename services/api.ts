@@ -11,13 +11,11 @@ const api: AxiosInstance = axios.create({
 export const setAuthToken = (token: string) => {
   api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
-
 // Auth
 export const googleLogin = (
   token: string,
-): Promise<
-  AxiosResponse<{ access_token: string; token_type: string; user: User }>
-> => api.post(apiEndpoints.googleLogin(), { token });
+): Promise<AxiosResponse<{ token: string; user: User }>> =>
+  api.post(apiEndpoints.googleLogin(), { token });
 
 // Users
 export const getUserByIdApi = (userId: number): Promise<AxiosResponse<User>> =>
@@ -138,12 +136,6 @@ export const unfollowUserApi = (
   followedId: number,
 ): Promise<AxiosResponse<void>> =>
   api.delete(apiEndpoints.unfollowUser(userId, followedId));
-
-export const isFollowingUserApi = (
-  userId: number,
-  followedId: number,
-): Promise<AxiosResponse<boolean>> =>
-  api.get(apiEndpoints.isFollowingUser(userId, followedId));
 
 export const getUserFollowersApi = (
   userId: number,

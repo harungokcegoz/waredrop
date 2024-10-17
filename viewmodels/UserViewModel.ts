@@ -1,4 +1,5 @@
 import { useCallback } from "react";
+
 import { User } from "../model/types";
 import {
   getUserByIdApi,
@@ -11,7 +12,6 @@ import {
   unfollowUserApi,
   getUserStatsApi,
   getUserPostsApi,
-  isFollowingUserApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 
@@ -112,20 +112,6 @@ export const useUserViewModel = () => {
     [user],
   );
 
-  const isFollowingUser = useCallback(
-    async (followedId: number) => {
-      if (!user) return false;
-      try {
-        const response = await isFollowingUserApi(user.id, followedId);
-        return response.data;
-      } catch (error) {
-        console.error("Error checking if following user:", error);
-        return false;
-      }
-    },
-    [user],
-  );
-
   const getUserBookmarks = useCallback(async () => {
     if (!user) return [];
     try {
@@ -176,6 +162,5 @@ export const useUserViewModel = () => {
     deleteUserAccount,
     getUserStats,
     getUserPosts,
-    isFollowingUser,
   };
 };
