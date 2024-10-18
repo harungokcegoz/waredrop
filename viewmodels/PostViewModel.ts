@@ -5,12 +5,12 @@ import {
   createPostApi,
   getPostByIdApi,
   likePostApi,
-  unlikePostApi,
   deletePostApi,
   addBookmarkApi,
   removeBookmarkApi,
   getUserFeedApi,
-  sharePostApi,
+  getBookmarksApi,
+  toggleBookmarkApi,
 } from "../services/api";
 import { useStore } from "../stores/useStore";
 
@@ -41,17 +41,10 @@ export const usePostViewModel = () => {
 
   const likePost = useCallback(async (postId: number) => {
     try {
-      await likePostApi(postId);
+      if (!user) return;
+      await likePostApi(postId, user.id);
     } catch (error) {
       console.error("Error liking post:", error);
-    }
-  }, []);
-
-  const unlikePost = useCallback(async (postId: number) => {
-    try {
-      await unlikePostApi(postId);
-    } catch (error) {
-      console.error("Error unliking post:", error);
     }
   }, []);
 
@@ -81,19 +74,11 @@ export const usePostViewModel = () => {
     [user],
   );
 
-  const sharePost = useCallback(async (postId: number) => {
-    try {
-      await sharePostApi(postId);
-    } catch (error) {
-      console.error("Error sharing post:", error);
-    }
-  }, []);
-
   const bookmarkPost = useCallback(
     async (postId: number) => {
       if (!user) return;
       try {
-        await addBookmarkApi(user.id, postId);
+        await toggleBookmarkApi(user.id, postId);
       } catch (error) {
         console.error("Error bookmarking post:", error);
       }
@@ -101,27 +86,25 @@ export const usePostViewModel = () => {
     [user],
   );
 
-  const unbookmarkPost = useCallback(
-    async (postId: number) => {
-      if (!user) return;
-      try {
-        await removeBookmarkApi(user.id, postId);
-      } catch (error) {
-        console.error("Error unbookmarking post:", error);
-      }
-    },
-    [user],
-  );
+  const getBookmarkedPosts = useCallback(async () => {
+    if (!user) return [];
+    try {
+      const response = await getBookmarksApi(user.id);
+      const bookmarkedPosts = response.data;
+      return bookmarkedPosts;
+    } catch (error) {
+      console.error("Error fetching bookmarked posts:", error);
+      return [];
+    }
+  }, [user, fetchPostById]);
 
   return {
     createNewPost,
     fetchPostById,
     likePost,
-    unlikePost,
     deletePostById,
     getUserFeed,
-    sharePost,
     bookmarkPost,
-    unbookmarkPost,
+    getBookmarkedPosts,
   };
 };

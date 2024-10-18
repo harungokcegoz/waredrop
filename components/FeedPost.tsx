@@ -1,7 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "expo-image";
-import { useRouter } from "expo-router";
-import React, { useCallback, useState, useRef } from "react";
+import React, { useCallback, useState, useRef, memo } from "react";
 import { TouchableOpacity, View } from "react-native";
 import { Popover, Text, XStack, YStack } from "tamagui";
 
@@ -19,36 +18,26 @@ interface FeedPostProps {
   onRefresh?: () => void;
 }
 
-export default function FeedPost({
-  post,
-  type = "feed",
-  onRefresh,
-}: FeedPostProps) {
-  const { likePost, unlikePost, bookmarkPost, unbookmarkPost } =
-    usePostViewModel();
-  const router = useRouter();
+const FeedPost = ({ post, type = "feed", onRefresh }: FeedPostProps) => {
+  const { likePost, bookmarkPost } = usePostViewModel();
   const [sharePopoverOpen, setSharePopoverOpen] = useState(false);
   const feedPostContentRef = useRef<View>(null);
 
   const handleLike = useCallback(async () => {
-    if (post.isLiked) {
-      await unlikePost(post.id);
-    } else {
-      await likePost(post.id);
-    }
+    await likePost(post.id);
+
     if (onRefresh) {
       onRefresh();
     }
-  }, [post.id, likePost, unlikePost, onRefresh]);
+  }, [post.id, likePost, onRefresh]);
 
-  const handleBookmark = useCallback(() => {
-    if (post.isBookmarked) {
-      unbookmarkPost(post.id);
-    } else {
-      bookmarkPost(post.id);
+  const handleBookmark = useCallback(async () => {
+    await bookmarkPost(post.id);
+
+    if (onRefresh) {
+      onRefresh();
     }
-    router.push("/");
-  }, [post.id, bookmarkPost, unbookmarkPost, router]);
+  }, [post.id, bookmarkPost, onRefresh]);
 
   const handleShare = useCallback(() => {
     setSharePopoverOpen(true);
@@ -95,59 +84,15 @@ export default function FeedPost({
               {type === "feed" && (
                 <TouchableOpacity onPress={handleLike}>
                   <Ionicons
-                    name={post.isLiked ? "heart" : "heart-outline"}
+                    name={post.is_liked ? "heart" : "heart-outline"}
                     size={24}
-                    color={post.isLiked ? "red" : "black"}
+                    color={post.is_liked ? "red" : "black"}
                   />
                 </TouchableOpacity>
               )}
               <Text fontFamily="jost">{post.likes_count} likes</Text>
             </XStack>
 
-            {type === "feed" && (
-              <Popover
-                open={sharePopoverOpen}
-                onOpenChange={setSharePopoverOpen}
-              >
-                <Popover.Trigger asChild>
-                  <TouchableOpacity onPress={handleShare}>
-                    <Ionicons
-                      name="paper-plane-outline"
-                      size={24}
-                      color="black"
-                    />
-                  </TouchableOpacity>
-                </Popover.Trigger>
-
-                <Popover.Content
-                  backgroundColor={colors.background}
-                  borderWidth={1}
-                  borderColor={colors.border}
-                  borderRadius="$4"
-                >
-                  <Popover.Arrow
-                    size="$4"
-                    backgroundColor={colors.background}
-                    borderWidth={1}
-                    borderColor={colors.border}
-                  />
-                  <SharePopover
-                    postId={post.id}
-                    feedPostRef={feedPostContentRef}
-                  />
-                </Popover.Content>
-              </Popover>
-            )}
-          </XStack>
-          {type === "feed" ? (
-            <TouchableOpacity onPress={handleBookmark}>
-              <Ionicons
-                name={post.isBookmarked ? "bookmark" : "bookmark-outline"}
-                size={24}
-                color="black"
-              />
-            </TouchableOpacity>
-          ) : (
             <Popover open={sharePopoverOpen} onOpenChange={setSharePopoverOpen}>
               <Popover.Trigger asChild>
                 <TouchableOpacity onPress={handleShare}>
@@ -158,6 +103,7 @@ export default function FeedPost({
                   />
                 </TouchableOpacity>
               </Popover.Trigger>
+
               <Popover.Content
                 backgroundColor={colors.background}
                 borderWidth={1}
@@ -176,9 +122,19 @@ export default function FeedPost({
                 />
               </Popover.Content>
             </Popover>
-          )}
+          </XStack>
+
+          <TouchableOpacity onPress={handleBookmark}>
+            <Ionicons
+              name={post.is_bookmarked ? "bookmark" : "bookmark-outline"}
+              size={24}
+              color="black"
+            />
+          </TouchableOpacity>
         </XStack>
       </YStack>
     </View>
   );
-}
+};
+
+export default memo(FeedPost);

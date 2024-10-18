@@ -102,11 +102,11 @@ export const createPostApi = (
 export const getPostByIdApi = (postId: number): Promise<AxiosResponse<Post>> =>
   api.get(apiEndpoints.getPostById(postId));
 
-export const likePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
-  api.post(apiEndpoints.likePost(postId));
-
-export const unlikePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
-  api.post(apiEndpoints.unlikePost(postId));
+export const likePostApi = (
+  postId: number,
+  userId: number,
+): Promise<AxiosResponse<Post>> =>
+  api.post(apiEndpoints.likePost(postId, userId));
 
 export const deletePostApi = (
   userId: number,
@@ -120,9 +120,6 @@ export const getUserFeedApi = (
   offset: number,
 ): Promise<AxiosResponse<Post[]>> =>
   api.get(apiEndpoints.getUserFeed(userId, limit, offset));
-
-export const sharePostApi = (postId: number): Promise<AxiosResponse<Post>> =>
-  api.post(apiEndpoints.sharePost(postId));
 
 // Follow
 export const followUserApi = (
@@ -148,22 +145,15 @@ export const getUserFollowingApi = (
   api.get(apiEndpoints.getUserFollowing(userId));
 
 // Bookmark
-export const addBookmarkApi = (
+export const toggleBookmarkApi = (
   userId: number,
   postId: number,
 ): Promise<AxiosResponse<void>> =>
-  api.post(apiEndpoints.addBookmark(userId), { postId });
-
-export const removeBookmarkApi = (
-  userId: number,
-  postId: number,
-): Promise<AxiosResponse<void>> =>
-  api.delete(apiEndpoints.removeBookmark(userId, postId));
+  api.post(apiEndpoints.toggleBookmark(userId, postId));
 
 export const getBookmarksApi = (
   userId: number,
-): Promise<AxiosResponse<number[]>> =>
-  api.get(apiEndpoints.getBookmarks(userId));
+): Promise<AxiosResponse<Post[]>> => api.get(apiEndpoints.getBookmarks(userId));
 
 // User Stats
 export const getUserStatsApi = (

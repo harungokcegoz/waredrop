@@ -32,13 +32,12 @@ const apiEndpoints = {
   // Posts
   createPost: (userId: number) => `/users/${userId}/posts`,
   getPostById: (postId: number) => `/posts/${postId}`,
-  likePost: (postId: number) => `/posts/${postId}/likes`,
-  unlikePost: (postId: number) => `/posts/${postId}/likes`,
+  likePost: (postId: number, userId: number) =>
+    `/posts/${postId}/likes?user_id=${userId}`,
   deletePost: (userId: number, postId: number) =>
     `/users/${userId}/posts/${postId}`,
   getUserFeed: (userId: number, limit: number, offset: number) =>
     `/users/${userId}/feed?limit=${limit}&offset=${offset}`,
-  sharePost: (postId: number) => `/posts/${postId}/shares`,
 
   // Follow
   followUser: (userId: number) => `/users/${userId}/follows`,
@@ -48,8 +47,7 @@ const apiEndpoints = {
   getUserFollowing: (userId: number) => `/users/${userId}/following`,
 
   // Bookmark
-  addBookmark: (userId: number) => `/users/${userId}/bookmarks`,
-  removeBookmark: (userId: number, postId: number) =>
+  toggleBookmark: (userId: number, postId: number) =>
     `/users/${userId}/bookmarks/${postId}`,
   getBookmarks: (userId: number) => `/users/${userId}/bookmarks`,
 

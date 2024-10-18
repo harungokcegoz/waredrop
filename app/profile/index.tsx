@@ -9,13 +9,11 @@ import UserProfileContent from "@/components/UserProfileContent";
 import { Post, User } from "@/model/types";
 import { useStore } from "@/stores/useStore";
 import { colors } from "@/styles/preset-styles";
-import { useAuthViewModel } from "@/viewmodels/AuthViewModel";
 import { useUserViewModel } from "@/viewmodels/UserViewModel";
 
 export default function ProfileScreen() {
   const { getUserProfile, getUserStats, getUserPosts } = useUserViewModel();
-  const { signOut } = useAuthViewModel();
-  const { user, setUser } = useStore();
+  const { user } = useStore();
   const [userProfile, setUserProfile] = useState<User | null>(null);
   const [userPosts, setUserPosts] = useState<Post[]>([]);
   const [refreshing, setRefreshing] = useState(false);

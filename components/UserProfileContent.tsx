@@ -34,7 +34,7 @@ export default function UserProfileContent({
         <XStack justifyContent="center" gap="$4" marginStart="$4">
           <YStack alignItems="center" gap="$1">
             <Text fontWeight="bold" fontSize="$5" fontFamily="jost">
-              {user.userStats.followersCount}
+              {user.userStats.totalPosts}
             </Text>
             <Text fontFamily="jost">Posts</Text>
           </YStack>
@@ -48,7 +48,7 @@ export default function UserProfileContent({
           </Text>
           <YStack alignItems="center" gap="$1">
             <Text fontWeight="bold" fontSize="$5" fontFamily="jost">
-              {user.userStats.totalPosts}
+              {user.userStats.followersCount}
             </Text>
             <Text fontFamily="jost">Followers</Text>
           </YStack>

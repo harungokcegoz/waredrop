@@ -74,8 +74,8 @@ export default function Settings() {
             )}
             {divider()}
             {settingsItem("Sign out", "exit-outline", handleLogout, "red")}
-            {divider()}
-            {settingsItem("Delete Account", "trash-outline", () => {}, "red")}
+            {/* {divider()} */}
+            {/* {settingsItem("Delete Account", "trash-outline", () => {}, "red")} */}
           </YStack>
         </YStack>
       </ScrollView>

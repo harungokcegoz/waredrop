@@ -24,6 +24,7 @@ import { Item } from "@/model/types";
 
 export default function ClothesItemDetail() {
   const router = useRouter();
+  const { back } = useRouter();
   const { user } = useStore();
   const { id, userId } = useLocalSearchParams();
   const { getItemById, deleteItemById } = useItemViewModel();
@@ -104,7 +105,7 @@ export default function ClothesItemDetail() {
             padding="$4"
             alignItems="center"
           >
-            <View onPress={() => router.back()}>
+            <View onPress={() => router.push("/wardrobe/")}>
               <Ionicons name="arrow-back" size={24} color="black" />
             </View>
             {user?.id === item.user_id && (
