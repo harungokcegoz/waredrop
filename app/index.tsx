@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { FlashList } from "@shopify/flash-list";
 import { Image } from "expo-image";
 import React, { useEffect, useState, useCallback } from "react";

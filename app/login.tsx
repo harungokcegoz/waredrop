@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";

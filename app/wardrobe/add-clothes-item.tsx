@@ -5,7 +5,7 @@ import ClothesItemForm from "../../components/ClothesItemForm";
 import { useItemViewModel } from "../../viewmodels/ItemViewModel";
 
 export default function UploadClothesScreen() {
-  const { addItem, isSuccess } = useItemViewModel();
+  const { addItem } = useItemViewModel();
   const router = useRouter();
 
   const handleUpload = (values) => {

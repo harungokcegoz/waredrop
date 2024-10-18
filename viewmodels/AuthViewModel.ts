@@ -1,7 +1,4 @@
-import {
-  GoogleSignin,
-  statusCodes,
-} from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useCallback } from "react";
 
 import { googleLogin } from "../services/api";
@@ -35,18 +32,9 @@ export const useAuthViewModel = () => {
       setToken(token);
       setUser(loggedInUser);
 
-      console.log("Successfully signed in");
       return loggedInUser;
-    } catch (error: any) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        console.log("Google Sign-In cancelled");
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        console.log("Google Sign-In already in progress");
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        console.log("Play Services not available");
-      } else {
-        console.error("Google Sign-In error:", error);
-      }
+    } catch (error) {
+      console.error("Google Sign-In error:", error);
       return null;
     }
   }, [setUser]);
@@ -56,7 +44,6 @@ export const useAuthViewModel = () => {
       await GoogleSignin.signOut();
       setUser(null);
       setToken(null);
-      console.log("Successfully signed out");
     } catch (error) {
       console.error("Error signing out:", error);
     }

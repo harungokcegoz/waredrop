@@ -6,8 +6,6 @@ import {
   getPostByIdApi,
   likePostApi,
   deletePostApi,
-  addBookmarkApi,
-  removeBookmarkApi,
   getUserFeedApi,
   getBookmarksApi,
   toggleBookmarkApi,

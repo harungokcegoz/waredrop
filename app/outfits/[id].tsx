@@ -85,7 +85,7 @@ export default function OutfitDetail() {
     <SafeAreaView style={{ flex: 1, backgroundColor: "white" }}>
       <ScrollView>
         <XStack justifyContent="space-between" padding="$4" alignItems="center">
-          <TouchableOpacity onPress={() => router.back()}>
+          <TouchableOpacity onPress={() => router.push("/outfits/")}>
             <Ionicons name="arrow-back" size={24} color="black" />
           </TouchableOpacity>
 

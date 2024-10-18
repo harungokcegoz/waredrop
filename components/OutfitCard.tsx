@@ -18,7 +18,6 @@ const OutfitCard: React.FC<OutfitCardProps> = ({
   outfit,
   selectedTags,
   size = "small",
-  userId,
 }) => {
   const router = useRouter();
 

@@ -24,7 +24,6 @@ import { Item } from "@/model/types";
 
 export default function ClothesItemDetail() {
   const router = useRouter();
-  const { back } = useRouter();
   const { user } = useStore();
   const { id, userId } = useLocalSearchParams();
   const { getItemById, deleteItemById } = useItemViewModel();
