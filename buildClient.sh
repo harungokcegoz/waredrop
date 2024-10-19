@@ -21,4 +21,4 @@ npm install
 npm run build
 
 # Start the Expo server
-npm run android
+npm run ios
