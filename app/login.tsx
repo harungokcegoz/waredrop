@@ -23,7 +23,7 @@ export default function LoginScreen() {
       justifyContent="center"
       alignItems="center"
       padding="$4"
-      space="$4"
+      gap="$4"
       backgroundColor="$background"
     >
       <Image

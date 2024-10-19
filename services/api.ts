@@ -11,6 +11,7 @@ const api: AxiosInstance = axios.create({
 export const setAuthToken = (token: string) => {
   api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 };
+
 // Auth
 export const googleLogin = (
   token: string,

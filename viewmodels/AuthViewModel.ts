@@ -28,6 +28,7 @@ export const useAuthViewModel = () => {
       }
 
       const response = await googleLogin(idToken);
+
       const { token, user: loggedInUser } = response.data;
       setToken(token);
       setUser(loggedInUser);
