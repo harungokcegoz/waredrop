@@ -13,7 +13,7 @@ import {
 import { useStore } from "../stores/useStore";
 
 export const usePostViewModel = () => {
-  const { user } = useStore();
+  const { user, setUser, setToken } = useStore();
 
   const createNewPost = useCallback(
     async (postData: Omit<Post, "id" | "user_id">) => {
@@ -65,6 +65,10 @@ export const usePostViewModel = () => {
         const response = await getUserFeedApi(user.id, limit, offset);
         return response.data;
       } catch (error) {
+        if (error.response.status === 403) {
+          setUser(null);
+          setToken(null);
+        }
         console.error("Error fetching user feed:", error);
         return [];
       }

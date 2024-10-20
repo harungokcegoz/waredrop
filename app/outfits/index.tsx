@@ -91,21 +91,27 @@ export default function OutfitsScreen() {
           <H5 fontFamily="jost" padding="$4">
             Results: {filteredOutfits.length}
           </H5>
-          <XStack
-            flexWrap="wrap"
-            justifyContent="space-between"
-            paddingHorizontal="$6"
-            gap="$5"
-          >
-            {filteredOutfits.map((outfit) => (
-              <OutfitCard
-                key={outfit.id}
-                outfit={outfit}
-                selectedTags={selectedTags}
-                size="small"
-              />
-            ))}
-          </XStack>
+          {filteredOutfits.length === 0 ? (
+            <View padding="$4">
+              <Text>No outfits found</Text>
+            </View>
+          ) : (
+            <XStack
+              flexWrap="wrap"
+              justifyContent="space-between"
+              paddingHorizontal="$6"
+              gap="$5"
+            >
+              {filteredOutfits.map((outfit) => (
+                <OutfitCard
+                  key={outfit.id}
+                  outfit={outfit}
+                  selectedTags={selectedTags}
+                  size="small"
+                />
+              ))}
+            </XStack>
+          )}
         </YStack>
       </ScrollView>
     </SafeAreaView>

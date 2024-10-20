@@ -57,17 +57,23 @@ export default function WardrobeScreen() {
             </Link>
           </Circle>
         </XStack>
-        {categories.map((category) => (
-          <View marginBottom="$4" key={category} gap="$4">
-            <Text fontSize="$5" fontWeight="bold" marginLeft="$5">
-              {category}
-            </Text>
-            <ClothesItemStack
-              onItemPress={handleItemPress}
-              items={wardrobe.filter((item) => item.category === category)}
-            />
+        {wardrobe.length === 0 ? (
+          <View padding="$4">
+            <Text>No items in wardrobe</Text>
           </View>
-        ))}
+        ) : (
+          categories.map((category) => (
+            <View marginBottom="$4" key={category} gap="$4">
+              <Text fontSize="$5" fontWeight="bold" marginLeft="$5">
+                {category}
+              </Text>
+              <ClothesItemStack
+                onItemPress={handleItemPress}
+                items={wardrobe.filter((item) => item.category === category)}
+              />
+            </View>
+          ))
+        )}
         <Spacer size="$10" />
       </ScrollView>
     </SafeAreaView>

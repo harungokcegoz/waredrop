@@ -68,7 +68,7 @@ export default function UserProfileContent({
           </YStack>
         </XStack>
       </YStack>
-      {showStats && (
+      {showStats && user.role === "influencer" && (
         <Card
           borderWidth={1}
           borderColor={colors.border}

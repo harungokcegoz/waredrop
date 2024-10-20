@@ -1,7 +1,7 @@
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { useCallback } from "react";
 
-import { googleLogin } from "../services/api";
+import { googleLogin, setAuthToken } from "../services/api";
 import { useStore } from "../stores/useStore";
 
 export const useAuthViewModel = () => {
@@ -28,8 +28,8 @@ export const useAuthViewModel = () => {
       }
 
       const response = await googleLogin(idToken);
-
       const { token, user: loggedInUser } = response.data;
+      setAuthToken(token);
       setToken(token);
       setUser(loggedInUser);
 
