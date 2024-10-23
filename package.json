@@ -12,7 +12,7 @@
     "lint": "eslint . && prettier --write .",
     "build": "expo prebuild --clean",
     "pod": "cd ios && pod install",
-    "ios-device": "expo run:ios --device -- --non-interactive",
+    "ios-device": "expo run:ios --device",
     "android-release": "cd android && ./gradlew bundleRelease",
     "client": "bash buildClient.sh",
     "backend": "bash buildBackend.sh"
