@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@database:5432/digital_closet"
+    depends_on:
+      - logstash
+      - database
+    command: ["npm", "run", "start:with-init"]
+    volumes:
+      - /home/ubuntu/digital-closet/backend/node/src/utils/logs:/home/ubuntu/digital-closet/backend/node/src/utils/logs
+    networks:
+      - monitoring-network
+
+  prometheus:
+    image: prom/prometheus:latest
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alert_rules.yml:/etc/prometheus/alert_rules.yml
+    ports:
+      - "9090:9090"  
+    networks:
+      - monitoring-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    volumes:
+      - ./alertmanager.yml:/etc/alertmanager/alertmanager.yml
+    ports:
+      - "9093:9093"
+    networks:
+      - monitoring-network
+  
+  database:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "postgres" 
+      POSTGRES_USER: "postgres"      
+      POSTGRES_DB: "digital_closet" 
+    volumes:
+      - ./src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - monitoring-network
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.17.9
+    environment:
+      - discovery.type=single-node
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - esdata:/usr/share/elasticsearch/data
+    healthcheck:
+      test: curl --fail http://localhost:9200/_cluster/health || exit 1
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - monitoring-network
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.17.9
+    ports:
+      - "5044:5044"
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+      - /home/ubuntu/digital-closet/backend/node/src/utils/logs:/home/ubuntu/digital-closet/backend/node/src/utils/logs
+    depends_on:
+      - elasticsearch
+    networks:
+      - monitoring-network
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.17.9
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_URL=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - monitoring-network
+      
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3001:3000"
+    networks:
+      - monitoring-network
+
+networks:
+  monitoring-network:
+    driver: bridge
+     
+volumes:
+  esdata:
+    driver: local

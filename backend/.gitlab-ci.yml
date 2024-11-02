@@ -1,0 +1,38 @@
+stages:
+  - validate
+  - plan
+  - apply
+
+variables:
+  TF_VAR_gitlab_access_token: $GITLAB_ACCESS_TOKEN
+  TF_VAR_branch_name: $CI_COMMIT_REF_NAME
+  TF_VAR_aws_key_pair_name: $AWS_KEY_PAIR_NAME
+  TF_VAR_blue_instance_count: $BLUE_INSTANCE_COUNT
+  TF_VAR_green_instance_count: $GREEN_INSTANCE_COUNT
+  TF_VAR_switch_traffic_to_green: $SWITCH_TRAFFIC_TO_GREEN
+
+before_script:
+  - echo "Setting up Terraform"
+  - apk add --no-cache curl unzip
+  - curl -Lo terraform.zip https://releases.hashicorp.com/terraform/1.0.0/terraform_1.0.0_linux_amd64.zip
+  - unzip terraform.zip
+  - mv terraform /usr/local/bin/
+  - terraform --version
+
+validate:
+  stage: validate
+  script:
+    - terraform init
+    - terraform validate
+
+plan:
+  stage: plan
+  script:
+    - terraform init
+    - terraform plan -out=tfplan
+
+apply:
+  stage: apply
+  script:
+    - terraform apply -auto-approve tfplan
+  when: manual # This will require manual approval to apply changes

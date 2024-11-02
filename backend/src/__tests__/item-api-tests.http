@@ -1,0 +1,32 @@
+@base_url = http://localhost:3000/api
+@aws_url = http://3.83.82.255:3000/api
+
+@user_id = 1
+@item_id = 2
+
+### Get user items
+GET {{base_url}}/users/{{user_id}}/items
+
+### Create a new item
+POST {{base_url}}/users/{{user_id}}/items
+Content-Type: application/json
+
+{
+    "name": "Blue Jeans",
+    "category": "Pants",
+    "color": "Blue",
+    "image_url": "https://example.com/blue-jeans.jpg"
+}
+
+### Update an item
+PUT {{base_url}}/users/{{user_id}}/items/{{item_id}}
+Content-Type: application/json
+
+{
+    "name": "Faded Blue Jeans",
+    "category": "Pants",
+    "color": "Light Blue"
+}
+
+### Delete an item
+DELETE {{base_url}}/api/users/{{user_id}}/items/{{item_id}}

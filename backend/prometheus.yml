@@ -1,0 +1,17 @@
+global:
+  scrape_interval: 15s
+
+rule_files:
+  - /etc/prometheus/alert_rules.yml
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 34.232.129.246:9093 
+
+scrape_configs:
+  - job_name: 'nodejs-app'
+    static_configs:
+      - targets: ['34.232.129.246:3000'] 
+    metrics_path: '/api/metrics' 

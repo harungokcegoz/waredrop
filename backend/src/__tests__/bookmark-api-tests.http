@@ -1,0 +1,4 @@
+@baseUrl = http://localhost:3000/api
+@awsUrl = http://3.83.82.255:3000/api
+### Toggle bookmark on a post
+POST {{baseUrl}}/users/1/bookmarks/1

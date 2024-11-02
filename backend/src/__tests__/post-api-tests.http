@@ -1,0 +1,32 @@
+@baseUrl = http://localhost:3000/api
+@awsUrl = http://3.83.82.255:3000/api
+
+### Create a new post
+POST {{baseUrl}}/posts
+Content-Type: application/json
+
+{
+    "userId": 1,
+    "outfitId": 1
+}
+
+### Get a specific post
+GET {{baseUrl}}/posts/1
+
+### Like a post
+POST {{baseUrl}}/posts/1/likes?user_id=1
+
+### Unlike a post
+POST {{baseUrl}}/posts/1/likes?user_id=1
+
+### Delete a post
+DELETE {{baseUrl}}/posts/1
+
+### Increment post shares
+PUT {{baseUrl}}/posts/1/shares
+
+### Get user feed
+GET {{baseUrl}}/users/1/feed
+
+### Get user posts
+GET {{baseUrl}}/users/1/posts

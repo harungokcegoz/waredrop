@@ -1,0 +1,38 @@
+@baseUrl = http://localhost:3000/api
+@awsUrl = http://3.83.82.255:3000/api
+
+### Get all users
+GET {{baseUrl}}/users
+
+### Get a specific user
+GET {{baseUrl}}/users/1
+
+### Update a user
+PUT {{baseUrl}}/users/1
+Content-Type: application/json
+
+{
+    "name": "Updated User Name",
+    "email": "updated@example.com"
+}
+
+### Delete a user
+DELETE {{baseUrl}}/users/2
+
+### Get user stats (for influencers)
+GET {{baseUrl}}/users/1/stats
+
+### Get user posts
+GET {{baseUrl}}/users/1/posts
+
+### Get user feed
+GET {{baseUrl}}/users/1/feed
+
+### Get user followers
+GET {{baseUrl}}/users/1/followers
+
+### Get users followed by user
+GET {{baseUrl}}/users/1/following
+
+### Get user bookmarks
+GET {{baseUrl}}/users/1/bookmarks

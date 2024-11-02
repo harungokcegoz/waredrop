@@ -1,0 +1,11 @@
+node_modules/
+.env
+package-lock.json
+dist/
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
+*.txt
+src/utils/logs
+eip-setup/
+.terraform/

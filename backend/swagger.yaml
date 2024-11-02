@@ -1,0 +1,819 @@
+openapi: 3.0.0
+info:
+  title: Digital Closet API
+  version: 1.0.0
+  description: API for managing digital closet, outfits, and social interactions
+
+servers:
+  - url: http://<instance-ip>:3000/api
+
+paths:
+  /auth/google:
+    post:
+      summary: Authenticate with Google
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                token:
+                  type: string
+      responses:
+        '200':
+          description: Successful authentication
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    $ref: '#/components/schemas/User'
+        '401':
+          description: Invalid token
+
+  /users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: List of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{id}:
+    get:
+      summary: Get a specific user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    put:
+      summary: Update a user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '200':
+          description: Updated user details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+
+    delete:
+      summary: Delete a user
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: User deleted successfully
+        '404':
+          description: User not found
+
+  /users/{userId}/stats:
+    get:
+      summary: Get user stats
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User stats
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserStats'
+
+  /users/{userId}/items:
+    get:
+      summary: Get user items
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Item'
+
+    post:
+      summary: Add a new item
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '201':
+          description: Created item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+
+  /users/{userId}/items/{itemId}:
+    get:
+      summary: Get a specific item
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Item details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+
+    put:
+      summary: Update an item
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ItemInput'
+      responses:
+        '200':
+          description: Updated item details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+
+    delete:
+      summary: Delete an item
+      tags:
+        - Items
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: itemId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted item details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '404':
+          description: Item not found
+
+  /users/{userId}/outfits:
+    get:
+      summary: Get user outfits
+      tags:
+        - Outfits
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of user outfits
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Outfit'
+
+    post:
+      summary: Create a new outfit
+      tags:
+        - Outfits
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutfitInput'
+      responses:
+        '201':
+          description: Created outfit
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outfit'
+
+  /users/{userId}/outfits/{outfitId}:
+    get:
+      summary: Get a specific outfit
+      tags:
+        - Outfits
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: outfitId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Outfit details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outfit'
+        '404':
+          description: Outfit not found
+
+    put:
+      summary: Update an outfit
+      tags:
+        - Outfits
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: outfitId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OutfitInput'
+      responses:
+        '200':
+          description: Updated outfit details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outfit'
+        '404':
+          description: Outfit not found
+
+    delete:
+      summary: Delete an outfit
+      tags:
+        - Outfits
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: outfitId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Deleted outfit details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Outfit'
+        '404':
+          description: Outfit not found
+
+  /posts:
+    post:
+      summary: Create a new post
+      tags:
+        - Posts
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                outfit_id:
+                  type: integer
+      responses:
+        '201':
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+  /posts/{postId}:
+    get:
+      summary: Get a specific post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          description: Post not found
+
+    delete:
+      summary: Delete a post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: Post deleted successfully
+        '404':
+          description: Post not found
+
+  /posts/{postId}/likes:
+    post:
+      summary: Toggle like on a post
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: user_id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated post like status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isLiked:
+                    type: boolean
+                  likes_count:
+                    type: integer
+
+  /posts/{postId}/shares:
+    put:
+      summary: Increment post shares
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Post shared successfully
+
+  /users/{userId}/feed:
+    get:
+      summary: Get user feed
+      tags:
+        - Posts
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: query
+          name: limit
+          schema:
+            type: integer
+        - in: query
+          name: offset
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User feed posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+  /users/{userId}/follows:
+    post:
+      summary: Follow a user
+      tags:
+        - Follows
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                followedId:
+                  type: integer
+      responses:
+        '200':
+          description: Successfully followed user
+
+  /users/{userId}/follows/{followedId}:
+    delete:
+      summary: Unfollow a user
+      tags:
+        - Follows
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: followedId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Successfully unfollowed user
+
+  /users/{userId}/followers:
+    get:
+      summary: Get user followers
+      tags:
+        - Follows
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of followers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{userId}/following:
+    get:
+      summary: Get users followed by user
+      tags:
+        - Follows
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of followed users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+
+  /users/{userId}/bookmarks/{postId}:
+    post:
+      summary: Toggle bookmark on a post
+      tags:
+        - Bookmarks
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Updated bookmark status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  isBookmarked:
+                    type: boolean
+
+  /users/{userId}/bookmarks:
+    get:
+      summary: Get user bookmarks
+      tags:
+        - Bookmarks
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of bookmarked posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Post'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        role:
+          type: string
+          enum: [influencer, regular]
+        profile_picture_url:
+          type: string
+        google_id:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserStats:
+      type: object
+      properties:
+        totalLikes:
+          type: integer
+        totalBookmarks:
+          type: integer
+        totalShares:
+          type: integer
+        followers:
+          type: integer
+        following:
+          type: integer
+        posts:
+          type: integer
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+        category:
+          type: string
+        color:
+          type: string
+        image_url:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+        commercial_link:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    ItemInput:
+      type: object
+      properties:
+        name:
+          type: string
+        category:
+          type: string
+        color:
+          type: string
+        image_url:
+          type: string
+        brand:
+          type: string
+        price:
+          type: number
+        commercial_link:
+          type: string
+
+    Outfit:
+      type: object
+      properties:
+        id:
+          type: integer
+        user_id:
+          type: integer
+        name:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    OutfitInput:
+      type: object
+      properties:
+        name:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        itemIds:
+          type: array
+          items:
+            type: integer
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        user:
+          $ref: '#/components/schemas/User'
+        outfit_id:
+          type: integer
+        likes_count:
+          type: integer
+        bookmarks_count:
+          type: integer
+        shares_count:
+          type: integer
+        outfit:
+          $ref: '#/components/schemas/Outfit'
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        shared_post_id:
+          type: integer
+        is_liked:
+          type: boolean
+        is_bookmarked:
+          type: boolean
+        is_user_following:
+          type: boolean

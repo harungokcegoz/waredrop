@@ -1,0 +1,13 @@
+@baseUrl = http://localhost:3000/api
+@awsUrl = http://3.83.82.255:3000/api
+
+### Follow a user
+POST {{baseUrl}}/users/1/follows
+Content-Type: application/json
+
+{
+    "followedId": 2
+}
+
+### Unfollow a user
+DELETE {{baseUrl}}/users/1/follows/2
