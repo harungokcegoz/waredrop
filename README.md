@@ -2,6 +2,8 @@
 
 A full-stack application that helps users manage their wardrobe digitally while connecting with others through fashion-focused social features. Built with React Native (Expo) for the frontend and Node.js/Express for the backend.
 
+Here you can find the prototype: [**Figma Link**](https://www.figma.com/proto/2k7FEYjjjokZfHgtmWz0gh/Waredrop?node-id=12-2784&node-type=frame&t=pYorc7q6JiiT3chf-0&scaling=contain&content-scaling=fixed&page-id=9:45)
+
 ## 🌟 Features
 
 - **Digital Wardrobe Management**
