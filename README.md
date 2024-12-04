@@ -30,7 +30,6 @@ Here you can find the prototype: [**Figma Link**](https://www.figma.com/proto/2k
 - TypeScript
 - Tamagui for UI components
 - Zustand for state management
-- React Navigation
 - Expo Router for navigation
 - Various Expo modules (Camera, Image Picker, etc.)
 
